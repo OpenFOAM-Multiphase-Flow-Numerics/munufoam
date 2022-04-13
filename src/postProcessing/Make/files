@@ -1,0 +1,4 @@
+volumeFractionError/volumeFractionError.C
+reconstructionError/reconstructionError.C
+
+LIB = $(FOAM_USER_LIBBIN)/libpostProcess

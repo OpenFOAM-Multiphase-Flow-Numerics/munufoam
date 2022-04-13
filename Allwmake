@@ -1,0 +1,11 @@
+#!/bin/bash
+
+wmake libso src/interfaceCapturing
+wmake libso src/surfaceForces
+
+wmake libso src/postProcessing
+
+wmake applications/benchmark/interfaceAdvector
+
+wmake applications/solver/interCapturingFoam
+

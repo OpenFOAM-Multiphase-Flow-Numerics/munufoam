@@ -1,0 +1,16 @@
+surfaceForces.C
+
+surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModel.C
+surfaceTensionForceModels/surfaceTensionForceModel/newSurfaceTensionForceModel.C
+
+surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModels.C
+
+accelerationForce/accelerationModel.C
+accelerationForce/accelerationModels.C
+accelerationForce/gravity/gravity.C
+
+deltaFunctions/deltaFunctionModel.C
+deltaFunctions/newDeltaFunctionModel.C
+deltaFunctions/alphaCSF/alphaCSF.C
+
+LIB = $(FOAM_USER_LIBBIN)/libsurfaceForces
