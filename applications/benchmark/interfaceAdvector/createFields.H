@@ -18,10 +18,6 @@ Info<< "Reading transportProperties\n" << endl;
 immiscibleIncompressibleTwoPhaseMixture mixture(U, phi);
 
 volScalarField& alpha1(mixture.alpha1());
-volScalarField& alpha2(mixture.alpha2());
-
-const dimensionedScalar& rho1 = mixture.rho1();
-const dimensionedScalar& rho2 = mixture.rho2();
 
 scalar V0 = fvc::domainIntegrate(alpha1).value();
 

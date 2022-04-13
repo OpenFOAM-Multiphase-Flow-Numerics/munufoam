@@ -98,8 +98,6 @@ Foam::Ostream& Foam::surfaceTensionForceModel::printSurfaceForceModels
     const wordList& surfaceForceNames
 )
 {
-    const int nCmpt = cmptNames.size();
-
     // Build a table of constituent parts by split name into constituent parts
     // - remove incompatible entries from the list
     // - note: row-0 contains the names of constituent parts (ie, the header)
