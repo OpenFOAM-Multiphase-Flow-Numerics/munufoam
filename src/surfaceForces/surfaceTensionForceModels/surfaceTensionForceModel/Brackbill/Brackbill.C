@@ -26,15 +26,6 @@ License
 #include "fvcDiv.H"
 #include "fvcGrad.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-// namespace Foam
-// {
-//     defineTypeNameAndDebug(Brackbill, 0);
-//     addToRunTimeSelectionTable(surfaceTensionForceModel,Brackbill, dictionary);
-// }
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class interfaceCapturing>
@@ -70,7 +61,7 @@ template<class interfaceCapturing>
 void Foam::Brackbill<interfaceCapturing>::correctContactAngle
 (
     surfaceVectorField::Boundary& nHatb,
-    surfaceVectorField::Boundary& Brackbillf
+    surfaceVectorField::Boundary& gradAlphaf
 )
 {
     scalar convertToRad = Foam::constant::mathematical::pi/180.0;
@@ -122,7 +113,7 @@ void Foam::Brackbill<interfaceCapturing>::correctContactAngle
             nHatp = a*nf + b*nHatp;
             nHatp /= (mag(nHatp) + deltaN_.value());
 
-            acap.gradient() = (nf & nHatp)*mag(Brackbillf[patchi]);
+            acap.gradient() = (nf & nHatp)*mag(gradAlphaf[patchi]);
             acap.evaluate();
         }
     }
@@ -138,15 +129,15 @@ void Foam::Brackbill<interfaceCapturing>::correct()
     const surfaceVectorField& Sf = mesh.Sf();
 
     // Cell gradient of alpha
-    const volVectorField Brackbill(fvc::grad(alpha1_, "nHat"));
+    const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
 
     // Interpolated face-gradient of alpha
-    surfaceVectorField Brackbillf(fvc::interpolate(Brackbill));
+    surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
 
     // Face unit interface normal
-    surfaceVectorField nHatfv(Brackbillf/(mag(Brackbillf) + deltaN_));
+    surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
 
-    correctContactAngle(nHatfv.boundaryFieldRef(), Brackbillf.boundaryFieldRef());
+    correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryFieldRef());
 
     // Face unit interface normal flux
     nHatf_ = nHatfv & Sf;

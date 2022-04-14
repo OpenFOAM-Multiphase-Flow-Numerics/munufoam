@@ -65,7 +65,7 @@ private:
         virtual void correctContactAngle
         (
             surfaceVectorField::Boundary& nHat,
-            surfaceVectorField::Boundary& Brackbillf
+            surfaceVectorField::Boundary& gradAlphaf
         );
 
 

@@ -85,7 +85,7 @@ Foam::interfaceRepresentation::interfaceRepresentation
     const dictionary& dict
 )
 :
-    reconstructionSchemesCoeffs_(dict),
+    interfaceRepresentationCoeffs_(dict),
     alpha1_(alpha1),
     phi_(phi),
     U_(U),

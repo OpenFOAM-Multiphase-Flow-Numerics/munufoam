@@ -34,8 +34,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef reconstructionSchemes_H
-#define reconstructionSchemes_H
+#ifndef interfaceRepresentation_H
+#define interfaceRepresentation_H
 
 #include "dimensionedScalar.H"
 #include "volFields.H"
@@ -55,7 +55,7 @@ class interfaceRepresentation
     // Private Data
 
         //- Coefficients dictionary
-        dictionary reconstructionSchemesCoeffs_;
+        dictionary interfaceRepresentationCoeffs_;
 
 
 protected:
@@ -125,13 +125,13 @@ public:
         //- Access to the model dictionary
         dictionary& modelDict()
         {
-            return reconstructionSchemesCoeffs_;
+            return interfaceRepresentationCoeffs_;
         }
 
         //- Const access to the model dictionary
         const dictionary& modelDict() const
         {
-            return reconstructionSchemesCoeffs_;
+            return interfaceRepresentationCoeffs_;
         }
 
         //- const-Reference to interface normals
