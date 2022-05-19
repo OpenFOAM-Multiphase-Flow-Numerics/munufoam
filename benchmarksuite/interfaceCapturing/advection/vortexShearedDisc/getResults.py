@@ -36,6 +36,6 @@ plt.savefig("error.png")
 profData = casefoam.profiling(8,processorDir="processor0",caseStructure=caseStructure,baseCase=baseCase)
 profData = profData.rename(columns={"var_0":"Method","var_1":"Res"})
 mask = profData["description"].str.contains('::advect\(')
-profData.loc[mask,["Method","Resolution","totalTime"]].to_csv("profData.csv",index=False)
+profData.loc[mask,["Method","Res","totalTime"]].to_csv("profData.csv",index=False)
 
 

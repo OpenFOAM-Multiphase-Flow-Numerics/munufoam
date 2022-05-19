@@ -1,0 +1,16 @@
+Method,Resolution,totalTime
+isoAlpha,x8,0.004924958
+isoAlpha,x16,0.021045252
+isoAlpha,x32,0.092514652
+isoAlpha,x64,0.394127279
+isoAlpha,x128,1.92405937
+plicRDF,x8,0.021713587
+plicRDF,x16,0.0707364
+plicRDF,x32,0.309131321
+plicRDF,x64,1.347600695
+plicRDF,x128,9.14131856
+gradAlpha,x8,0.006549296
+gradAlpha,x16,0.027175558
+gradAlpha,x32,0.121898857
+gradAlpha,x64,0.548375505
+gradAlpha,x128,2.479241084
