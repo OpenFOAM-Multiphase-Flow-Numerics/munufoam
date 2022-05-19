@@ -1,4 +1,6 @@
 volumeFractionError/volumeFractionError.C
 reconstructionError/reconstructionError.C
+interface/interface.C
+interface/sampledInterface.C
 
 LIB = $(FOAM_USER_LIBBIN)/libpostProcess

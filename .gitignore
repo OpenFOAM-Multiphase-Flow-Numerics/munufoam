@@ -33,6 +33,7 @@ core
 lnInclude
 
 #OpenFOAM
+figures
 Cases
 CasesTri
 */polyMesh/*

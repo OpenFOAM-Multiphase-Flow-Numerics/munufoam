@@ -56,6 +56,14 @@ maxAlphaCo      0.5;
 
 maxDeltaT       0.05;
 
+profiling
+{
+    active      true;
+    cpuInfo     false;
+    memInfo     false;
+    sysInfo     false;
+}
+
 functions
 {
 	volumeFractionError
@@ -71,7 +79,40 @@ functions
 		writeInterval   4;
 		writePrecision 	16;
 	}
+	
+	freeSurface
+    {
+        type            surfaces;
+        libs            (sampling postProcess);
+        interpolationScheme cell;
+		writeControl    adjustableRunTime;
+		writeInterval   4;
+        surfaceFormat   vtp;
+        fields
+        (
+            alpha.water
+        );
+        surfaces
+        (
+            freeSurface
+            {
+                type        isoSurfaceCell;
+                isoField    alpha.water;
+                isoValue    0.5;
+                interpolate true;
+                regularise  true;
+            }
 
+            // PLIC
+            // {
+            //     type        interface;
+            //     interpolate false;
+            //     regularise  false;
+            // }
+
+           
+        );
+    }
 	
 }
 

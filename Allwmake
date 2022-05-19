@@ -1,5 +1,6 @@
 #!/bin/bash
 
+wmake libso src/stencil
 wmake libso src/interfaceCapturing
 wmake libso src/surfaceForces
 

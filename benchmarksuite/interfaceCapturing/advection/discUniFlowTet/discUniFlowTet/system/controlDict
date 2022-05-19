@@ -58,6 +58,14 @@ maxAlphaCo      $MAXCFL;
 
 maxDeltaT       1e6;
 
+profiling
+{
+    active      true;
+    cpuInfo     false;
+    memInfo     false;
+    sysInfo     false;
+}
+
 functions
 {
 	volumeFractionError
@@ -73,6 +81,7 @@ functions
 		writeInterval   0.1;
 		writePrecision 	16;
 	}
+
 }
 
 

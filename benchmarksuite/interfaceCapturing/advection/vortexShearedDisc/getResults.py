@@ -2,7 +2,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import casefoam
-from casefoam import postFunctions
 import seaborn as sns
 
 sns.set_style("ticks")
@@ -24,13 +23,19 @@ error = error.rename(columns={1: "E1", 2: "Emass", 3: "Ebound", 4 : "delta"}) # 
 error["nCells"] = 1/error["delta"] # domain size is 1
 error['Res'] = error['Res'].str.replace('x', '')
 error['Res'] = error['Res'].apply(pd.to_numeric)
-# error = error.set_index(["var_0","var_1","var_2"])
+
 print("error",error)
 error.to_csv("error.csv",index=False)
 sns.lineplot(x="Res", y="E1",markers=True,hue="Model",style="Model",data=error)
 plt.xscale('log')
 plt.yscale('log')
 plt.savefig("error.png")
-# plt.show()
+
+# save profiling data
+
+profData = casefoam.profiling(8,processorDir="processor0",caseStructure=caseStructure,baseCase=baseCase)
+profData = profData.rename(columns={"var_0":"Method","var_1":"Res"})
+mask = profData["description"].str.contains('::advect\(')
+profData.loc[mask,["Method","Resolution","totalTime"]].to_csv("profData.csv",index=False)
 
 

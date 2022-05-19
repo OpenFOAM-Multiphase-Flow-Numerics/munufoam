@@ -19,7 +19,7 @@ def changeGeoFile(Nx):
                 'triSquare.geo': 
                 { '#!stringManipulation': 
                     {
-                        "nx=10;": f"nx={Nx};"
+                        "nx=40;": f"nx={Nx};"
                     }
                 }
             }

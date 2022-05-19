@@ -15,13 +15,13 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-nx	128;
+nx	80;
 ny	1;
-nz	128;
+nz	80;
 
 SUBCYL       1;
 ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+RECONSCHEME  Swartz;
 MAXCFL       0.1;
 
 // ************************************************************************* //

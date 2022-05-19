@@ -8,7 +8,7 @@ import seaborn as sns
 sns.set_style("ticks")
 
 caseStructure = [['isoAlpha', 'plicRDF','MULES'],
-                 ['x32', 'x64', 'x128', 'x256', 'x512']]
+                 ['x16','x32', 'x64', 'x128']]
 
 baseCase = 'Cases'
 solutionDir = 'volumeFractionError/0'
@@ -33,3 +33,9 @@ plt.yscale('log')
 plt.savefig("error.png")
 # plt.show()
 
+# save profiling data
+
+profData = casefoam.profiling(3,processorDir="processor0",caseStructure=caseStructure,baseCase=baseCase)
+profData = profData.rename(columns={"var_0":"Method","var_1":"Res"})
+mask = profData["description"].str.contains('::advect\(')
+profData.loc[mask,["Method","Res","totalTime"]].to_csv("profData.csv",index=False)

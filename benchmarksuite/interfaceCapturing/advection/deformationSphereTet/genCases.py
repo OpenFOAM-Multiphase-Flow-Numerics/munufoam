@@ -1,7 +1,7 @@
 import casefoam
 
 case = [['isoAlpha', 'plicRDF','MULES'],
-        ['x16','x32', 'x64' ]] #, 'x128']]
+        ['x16','x32']] #, 'x64' ]] #, 'x128']]
 
 
 def updateScheme(advect,recon,sub_steps):

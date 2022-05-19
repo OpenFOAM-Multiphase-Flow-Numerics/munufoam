@@ -41,6 +41,7 @@ License
 template<class interfaceRepresentation>
 void Foam::advection::MULESScheme<interfaceRepresentation>::updateNHatf()
 {
+    addProfilingInFunction(algebaricVoF);
     // Cell gradient of alpha
     const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
 
@@ -172,6 +173,7 @@ template<class interfaceRepresentation>
 template<class SpType, class SuType>
 void Foam::advection::MULESScheme<interfaceRepresentation>::advect(const SpType& Sp, const SuType& Su)
 {
+    addProfilingInFunction(algebaricVoF);
     updateNHatf();
 
     word alphaScheme("div(phi,alpha)");

@@ -21,6 +21,6 @@ nz	128;
 
 SUBCYL       1;
 ADVECTSCHEME isoAdvection;
-RECONSCHEME plicRDF;
+RECONSCHEME  plicRDF;
 
 // ************************************************************************* //

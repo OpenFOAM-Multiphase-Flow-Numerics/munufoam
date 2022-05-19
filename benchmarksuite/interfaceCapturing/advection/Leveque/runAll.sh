@@ -10,3 +10,4 @@ chmod u+x Allrun
 ./Allrun
 
 python getResults.py
+python createFigures.py

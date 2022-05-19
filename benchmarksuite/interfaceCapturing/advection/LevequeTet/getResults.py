@@ -33,3 +33,9 @@ plt.yscale('log')
 plt.savefig("error.png")
 # plt.show()
 
+# save profiling data
+
+profData = casefoam.profiling(3,processorDir="processor0",caseStructure=caseStructure,baseCase=baseCase)
+profData = profData.rename(columns={"var_0":"Method","var_1":"Res"})
+mask = profData["description"].str.contains('::advect\(')
+profData.loc[mask,["Method","Resolution","totalTime"]].to_csv("profData.csv",index=False)
