@@ -14,12 +14,14 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "<system>/simulationParameter"
+
 solvers
 {
-    "alpha.water.*"
+    "alpha.water"
     {
-        interfaceCapturingScheme isoAdvection;
-        interfaceRepresentation isoAlpha;
+        interfaceCapturingScheme $interfaceCapturingMethod;
+        interfaceRepresentation $interfaceRepresentation;
         nAlphaCorr      2;
         nAlphaSubCycles 1;
         cAlpha          1;
