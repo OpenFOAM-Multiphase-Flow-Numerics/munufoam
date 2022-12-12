@@ -53,7 +53,7 @@ python -m venv env
 pip install oftest
 
 py.test # runs the tests
-py.test --writeNSteps=1 run/ # test case in run folder
+py.test --writeNSteps=1 tutorials/ # test case in run folder
 ```
 
 
