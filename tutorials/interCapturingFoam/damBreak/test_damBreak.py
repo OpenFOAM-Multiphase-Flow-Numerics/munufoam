@@ -24,7 +24,7 @@ def simMod(interfaceCapturingMethod, interfaceRepresentation):
 
 isoAdvection_plicRDF = simMod("isoAdvection", "plicRDF")
 isoAdvection_isoAlpha = simMod("isoAdvection", "isoAlpha")
-isoAdvection_gradAlpha = simMod("isoAdvection", "gradAlphaa")
+isoAdvection_gradAlpha = simMod("isoAdvection", "gradAlpha")
 
 parameters = [isoAdvection_plicRDF, isoAdvection_isoAlpha, isoAdvection_gradAlpha]
 

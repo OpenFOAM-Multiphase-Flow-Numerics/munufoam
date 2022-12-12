@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-interfaceCapturingMethod asd;
-interfaceRepresentation  asd;
+interfaceCapturingMethod isoAdvection;
+interfaceRepresentation  plicRDF;
 
 // ************************************************************************* //

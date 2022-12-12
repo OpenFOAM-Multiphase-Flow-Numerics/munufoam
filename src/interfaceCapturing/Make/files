@@ -1,26 +1,39 @@
-cellCuts/cutCell/cutCell.C
-cellCuts/cutCell/cutCellPLIC.C
-cellCuts/cutCell/cutCellIso.C
-cellCuts/cutCell/cutCellImpFunc.C
-cellCuts/cutFace/cutFace.C
-cellCuts/cutFace/cutFacePLIC.C
-cellCuts/cutFace/cutFaceAdvect.C
-cellCuts/cutFace/cutFaceIso.C
-cellCuts/cutFace/cutFaceImpFunc.C
-surfaceIterators/surfaceIteratorPLIC.C
-surfaceIterators/surfaceIteratorIso.C
+
+
+
+
+
+
+
+
+
+
+
 
 multiDimPolyFitter/multiDimPolyFunctions/paraboloid.C
 multiDimPolyFitter/leastSquareFitParabolid.C
 
-reconstructedDistanceFunction/reconstructedDistanceFunction.C
+
 markInterfaceRegion/markInterfaceRegion.C
 
-/* Run-time selectable interfaceCapturing */
-interfaceCapturing/newInterfaceCapturing.C
-interfaceCapturing/interfaceCapturing.C
-interfaceCapturing/interfaceRepresentations/interfaceRepresentation.C
+geometricVOF/cellCuts/cutCell/cutCell.C
+geometricVOF/cellCuts/cutCell/cutCellPLIC.C
+geometricVOF/cellCuts/cutCell/cutCellIso.C
+geometricVOF/cellCuts/cutCell/cutCellImpFunc.C
+geometricVOF/cellCuts/cutFace/cutFace.C
+geometricVOF/cellCuts/cutFace/cutFacePLIC.C
+geometricVOF/cellCuts/cutFace/cutFaceAdvect.C
+geometricVOF/cellCuts/cutFace/cutFaceIso.C
+geometricVOF/cellCuts/cutFace/cutFaceImpFunc.C
+geometricVOF/surfaceIterators/surfaceIteratorPLIC.C
+geometricVOF/surfaceIterators/surfaceIteratorIso.C
+geometricVOF/reconstructedDistanceFunction/reconstructedDistanceFunction.C
 
-interfaceCapturing/interfaceCapturingMethods.C
+/* Run-time selectable interfaceCapturing */
+newInterfaceCapturing.C
+interfaceCapturing.C
+interfaceRepresentation.C
+
+interfaceCapturingMethods.C
 
 LIB = $(FOAM_USER_LIBBIN)/libinterfaceCapturing

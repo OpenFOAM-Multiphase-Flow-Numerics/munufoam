@@ -50,7 +50,7 @@ Foam::surfaceTensionForceModel::New
  
     Info << "dictionaryConstructorTablePtr_ toc "  << dictionaryConstructorTablePtr_->sortedToc() << endl;
 
-    auto* ctorPtr = dictionaryConstructorTable(surfaceTensionForceModelTypeName);
+    auto ctorPtr = dictionaryConstructorTable(surfaceTensionForceModelTypeName);
 
     const interfaceCapturing& interfaceCapturingMethod =
         alpha1.mesh().lookupObject<interfaceCapturing>(interfaceCapturing::typeName);
