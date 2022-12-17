@@ -25,24 +25,50 @@ License
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+namespace Foam
+{
+    defineTypeNameAndDebug(interfaceCapturingMethod, 0);
+    defineRunTimeSelectionTable(interfaceCapturingMethod, dictionary);
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class interfaceRepresentation>
-Foam::interfaceCapturingMethod<interfaceRepresentation>::interfaceCapturingMethod
+Foam::interfaceCapturingMethod::interfaceCapturingMethod
 (
-      volScalarField& alpha1,
-      const surfaceScalarField& phi,
-      const volVectorField& U
+    volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
 )
 :
-    interfaceCapturing(alpha1,phi,U),
-    surf_
-    (
-        alpha1,
-        phi,
-        U,
-        interfaceCapturing::modelDict()
-    )
+  IOdictionary
+  (
+      IOobject
+      (
+          interfaceCapturingMethod::typeName,
+          alpha1.time().constant(),
+          alpha1.db(),
+          IOobject::NO_READ,
+          IOobject::NO_WRITE
+      )
+  ),
+  interfaceCapturingMethodCoeffs_(alpha1.mesh().solverDict(alpha1.name())),
+
+  alpha1_(alpha1),
+  phi_(phi),
+  U_(U),
+  alphaPhi_
+  (
+      IOobject
+      (
+          "alphaPhi_",
+          alpha1_.mesh().time().timeName(),
+          alpha1_.mesh(),
+          IOobject::NO_READ,
+          IOobject::NO_WRITE
+      ),
+      alpha1_.mesh(),
+      dimensionedScalar("zero", dimVol/dimTime, 0)
+  )
 {
 
 
@@ -50,12 +76,23 @@ Foam::interfaceCapturingMethod<interfaceRepresentation>::interfaceCapturingMetho
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-template<class interfaceRepresentation>
-Foam::interfaceCapturingMethod<interfaceRepresentation>::~interfaceCapturingMethod()
-{}
+// Foam::interfaceCapturingMethod::~interfaceCapturingMethod()
+// {}
 
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
 
+
+const Foam::dictionary&
+Foam::interfaceCapturingMethod::modelDict() const
+{
+    return interfaceCapturingMethodCoeffs_;
+}
+
+Foam::dictionary&
+Foam::interfaceCapturingMethod::modelDict()
+{
+    return interfaceCapturingMethodCoeffs_;
+}
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 

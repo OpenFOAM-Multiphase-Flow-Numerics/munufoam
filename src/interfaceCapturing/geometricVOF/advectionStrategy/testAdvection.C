@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2017 OpenCFD Ltd.
+    Modified code Copyright (C) 2022 henning Scheufler
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,43 +25,34 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeInterfaceCapturingMethodTypes.H"
+#include "testAdvection.H"
 
-#include "isoAdvection.H"
-#include "MULESScheme.H"
+namespace Foam
+{
+    defineTypeNameAndDebug(testAdvection, 0);
+}
 
-#include "plicRDF.H"
-#include "gradAlpha.H"
-#include "isoAlpha.H"
-#include "isoSurface.H"
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-makeInterfaceCapturingMethodTypes
+Foam::testAdvection::testAdvection
 (
-    isoAdvection,
-    gradAlpha
-);
+    volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
+)
+:
+alpha1_(alpha1),
+phi_(phi),
+U_(U)
+{
+
+}
 
 
-makeInterfaceCapturingMethodTypes
-(
-    isoAdvection,
-    plicRDF
-);
-
-makeInterfaceCapturingMethodTypes
-(
-    isoAdvection,
-    isoAlpha
-);
-
-
-makeInterfaceCapturingMethodTypes
-(
-    MULESScheme,
-    isoSurface
-);
+void Foam::testAdvection::advect(const geometricVoF& geoVoF)
+{
+    Info << "advect surface"  << endl;
+}
 
 // ************************************************************************* //

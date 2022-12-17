@@ -20,82 +20,55 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceCapturing.H"
+#include "interfaceCapturingModel.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-namespace Foam
-{
-    defineTypeNameAndDebug(interfaceCapturing, 0);
-    defineRunTimeSelectionTable(interfaceCapturing, dictionary);
-}
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interfaceCapturing::interfaceCapturing
+
+template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interfaceCapturingModel
 (
     volScalarField& alpha1,
     const surfaceScalarField& phi,
     const volVectorField& U
 )
 :
-  IOdictionary
-  (
-      IOobject
-      (
-          interfaceCapturing::typeName,
-          alpha1.time().constant(),
-          alpha1.db(),
-          IOobject::NO_READ,
-          IOobject::NO_WRITE
-      )
-  ),
-  interfaceCapturingCoeffs_(alpha1.mesh().solverDict(alpha1.name())),
-
-  alpha1_(alpha1),
-  phi_(phi),
-  U_(U),
-  alphaPhi_
-  (
-      IOobject
-      (
-          "alphaPhi_",
-          alpha1_.mesh().time().timeName(),
-          alpha1_.mesh(),
-          IOobject::NO_READ,
-          IOobject::NO_WRITE
-      ),
-      alpha1_.mesh(),
-      dimensionedScalar("zero", dimVol/dimTime, 0)
-  )
+    interfaceCapturingMethod(alpha1,phi,U),
+    surface_(alpha1,phi,U,alpha1.mesh().solverDict(alpha1.name())),
+    advectionStrat_(alpha1,phi,U)
 {
-
 
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::interfaceCapturing::~interfaceCapturing()
-{}
+// template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+// Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interfaceCapturingModel::~interfaceCapturingModel()
+// {
+    
+// }
 
-// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
-
-
-const Foam::dictionary&
-Foam::interfaceCapturing::modelDict() const
-{
-    return interfaceCapturingCoeffs_;
-}
-
-Foam::dictionary&
-Foam::interfaceCapturing::modelDict()
-{
-    return interfaceCapturingCoeffs_;
-}
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+        //- advection of the interface
+template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+void Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect()
+{
+    advectionStrat_.advect(surface(timeState::oldState));
+};
 
+
+template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+const Surface&  Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::surface
+(
+    timeState state
+)
+{
+    return surface_.surface(state);
+};
 
 // ************************************************************************* //

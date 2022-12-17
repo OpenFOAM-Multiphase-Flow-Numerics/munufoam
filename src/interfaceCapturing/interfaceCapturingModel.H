@@ -19,29 +19,28 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interfaceCapturing
+    Foam::interfaceCapturingModel
 
 Description
     Base class for advection schemes
 
 SourceFiles
-    interfaceCapturing.C
-    newinterfaceCapturing.C
+    interfaceCapturingModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef interfaceCapturing_H
-#define interfaceCapturing_H
+#ifndef interfaceCapturingModel_H
+#define interfaceCapturingModel_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
+#include "interfaceCapturingMethod.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "IOdictionary.H"
-
-#include "interfaceRepresentation.H"
+#include "interfaceRepresentationModel.H"
 
 
 
@@ -52,77 +51,34 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class interfaceCapturing Declaration
+                Class interfaceCapturingModel Declaration
 \*---------------------------------------------------------------------------*/
-
-class interfaceCapturing
-    : public IOdictionary
+template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+class interfaceCapturingModel
+:
+    public interfaceCapturingMethod
 {
-
-private:
-        //-
-        dictionary interfaceCapturingCoeffs_;
-
-
-protected:
-
-        // reference to the VoF Field
-        volScalarField& alpha1_;
-
-        // reference to the face fluxes
-        const surfaceScalarField& phi_;
-
-        // reference to the velocity field
-        const volVectorField& U_;
-
-        //- Face volumetric transport
-        surfaceScalarField alphaPhi_;
-
     // Private Member Functions
 
-private:
+    interfaceRepresentationModel<Surface,SurfaceStrategy> surface_;
+    AdvectionStrategy advectionStrat_;
 
         //- Disallow copy construct
-        interfaceCapturing(const interfaceCapturing&);
+        interfaceCapturingModel(const interfaceCapturingModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const interfaceCapturing&);
-
-
-public:
-
-    //-
-    dictionary& modelDict();
-
-    //-
-    const dictionary& modelDict() const;
+        void operator=(const interfaceCapturingModel&);
 
 
 public:
 
     //- Runtime type information
-    TypeName("interfaceCapturing");
-
-
-    //- Declare run-time constructor selection table
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            interfaceCapturing,
-            dictionary,
-            (
-                volScalarField& alpha1,
-                const surfaceScalarField& phi,
-                const volVectorField& U
-            ),
-            (alpha1, phi,U)
-        );
-
+    TypeName("interfaceCapturingModel");
 
     // Selectors
 
         //- Return a reference to the selected phaseChange model
-        static autoPtr<interfaceCapturing> New
+        static autoPtr<interfaceCapturingModel> New
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -131,9 +87,7 @@ public:
 
 
     // Constructors
-
-        //- Construct from dictionary
-        interfaceCapturing
+        interfaceCapturingModel
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -142,46 +96,17 @@ public:
 
 
     //- Destructor
-    virtual ~interfaceCapturing();
+    virtual ~interfaceCapturingModel() = default;
 
 
     // Member Functions
 
         //- advection of the interface
-        virtual void advect() = 0;
+        void advect() override;
 
-        //- advection of the interface with source terms
-        virtual void advect
-        (
-            const volScalarField::Internal& Sp,
-            const volScalarField::Internal& Su
-        ) = 0;
+        //- Reconstruct interface
+        const Surface& surface(timeState state) override;
 
-        template < class Type >
-        tmp<surfaceScalarField> getRhoPhi
-        (
-            const Type rho1,
-            const Type rho2
-        ) const
-        {
-            return tmp<surfaceScalarField>
-            (
-                new surfaceScalarField
-                (
-                    "rhoPhi",
-                    (rho1 - rho2)*alphaPhi_ + rho2*phi_
-                )
-            );
-        }
-        
-        const surfaceScalarField& alphaPhi() const
-        {
-            return alphaPhi_;
-        }
-
-        virtual const interfaceRepresentation& surf() const  = 0;
-
-        virtual interfaceRepresentation& surf() = 0;
 
 };
 
@@ -190,6 +115,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "interfaceCapturingModel.C"
+#endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

@@ -26,7 +26,7 @@ Description
 
 SourceFiles
     interfaceCapturingMethod.C
-    newinterfaceCapturingMethodMethod.C
+    newinterfaceCapturingMethod.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -35,12 +35,14 @@ SourceFiles
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
-#include "interfaceCapturing.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "IOdictionary.H"
+
+#include "interfaceRepresentation.H"
+#include "surfaceBase.H"
 
 
 
@@ -53,26 +55,68 @@ namespace Foam
 /*---------------------------------------------------------------------------*\
                 Class interfaceCapturingMethod Declaration
 \*---------------------------------------------------------------------------*/
-template<class interfaceRepresentation>
+
 class interfaceCapturingMethod
-    : public interfaceCapturing
+    : public IOdictionary
 {
+
+private:
+        //-
+        dictionary interfaceCapturingMethodCoeffs_;
+
+
+protected:
+
+        // reference to the VoF Field
+        volScalarField& alpha1_;
+
+        // reference to the face fluxes
+        const surfaceScalarField& phi_;
+
+        // reference to the velocity field
+        const volVectorField& U_;
+
+        //- Face volumetric transport
+        surfaceScalarField alphaPhi_;
+
     // Private Member Functions
 
-        
+private:
 
         //- Disallow copy construct
         interfaceCapturingMethod(const interfaceCapturingMethod&);
 
         //- Disallow default bitwise assignment
         void operator=(const interfaceCapturingMethod&);
-protected:
 
-    interfaceRepresentation surf_;
 
 public:
 
-    typedef interfaceRepresentation reconScheme;
+    //-
+    dictionary& modelDict();
+
+    //-
+    const dictionary& modelDict() const;
+
+
+public:
+
+    //- Runtime type information
+    TypeName("interfaceCapturingMethod");
+
+    //- Declare run-time constructor selection table
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        interfaceCapturingMethod,
+        dictionary,
+        (
+            volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
+        ),
+        (alpha1, phi,U)
+    );
 
     // Selectors
 
@@ -97,7 +141,7 @@ public:
 
 
     //- Destructor
-    virtual ~interfaceCapturingMethod();
+    virtual ~interfaceCapturingMethod() = default;
 
 
     // Member Functions
@@ -106,21 +150,40 @@ public:
         virtual void advect() = 0;
 
         //- advection of the interface with source terms
-        virtual void advect
-        (
-            const volScalarField::Internal& Sp,
-            const volScalarField::Internal& Su
-        ) = 0;
+        // virtual void advect
+        // (
+        //     const volScalarField::Internal& Sp,
+        //     const volScalarField::Internal& Su
+        // ) = 0;
 
-        virtual const reconScheme& surf() const
-        {
-            return surf_;
-        }
+        //- Reconstruct interface
+        virtual const surfaceBase& surface(timeState state) = 0;
 
-        virtual reconScheme& surf()
-        {
-            return surf_;
-        }
+        // template < class Type >
+        // tmp<surfaceScalarField> getRhoPhi
+        // (
+        //     const Type rho1,
+        //     const Type rho2
+        // ) const
+        // {
+        //     return tmp<surfaceScalarField>
+        //     (
+        //         new surfaceScalarField
+        //         (
+        //             "rhoPhi",
+        //             (rho1 - rho2)*alphaPhi_ + rho2*phi_
+        //         )
+        //     );
+        // }
+        
+        // const surfaceScalarField& alphaPhi() const
+        // {
+        //     return alphaPhi_;
+        // }
+
+        // virtual const interfaceRepresentation& surf() const  = override;
+
+        // virtual interfaceRepresentation& surf() = override;
 
 };
 
@@ -129,9 +192,6 @@ public:
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "interfaceCapturingMethod.C"
-#endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

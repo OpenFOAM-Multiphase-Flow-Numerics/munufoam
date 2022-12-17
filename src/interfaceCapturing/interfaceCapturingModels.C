@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019-2020 DLR
+    Copyright (C) 2017 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,35 +25,22 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceRepresentation.H"
+#include "makeInterfaceCapturingMethodTypes.H"
+#include "geometricVoF.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "testAdvection.H"
 
-namespace Foam
-{
-    defineTypeNameAndDebug(interfaceRepresentation, 0);
-}
+#include "testRecon.H"
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::interfaceRepresentation::interfaceRepresentation
+makeInterfaceCapturingMethodTypes
 (
-    volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
-    const dictionary& dict
-)
-:
-    interfaceRepresentationCoeffs_(dict)
-    // alpha1_(alpha1),
-    // phi_(phi),
-    // U_(U)
-{}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
+    geometricVoF,
+    testRecon,
+    testAdvection
+);
 
 
 // ************************************************************************* //

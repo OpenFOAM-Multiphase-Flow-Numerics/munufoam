@@ -5,7 +5,10 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019-2020 DLR
+    Copyright (C) 2016-2017 DHI
+    Modified code Copyright (C) 2016-2019 OpenCFD Ltd.
+    Modified code Copyright (C) 2018 Johan Roenby
+    Modified code Copyright (C) 2019 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,92 +27,71 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interfaceRepresentation
+    Foam::testAdvection
 
 Description
-    Original code supplied by Henning Scheufler, DLR (2019)
+   
 
 SourceFiles
-    interfaceRepresentation.C
+    testAdvection.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef interfaceRepresentation_H
-#define interfaceRepresentation_H
+#ifndef testAdvection_H
+#define testAdvection_H
 
 #include "typeInfo.H"
-#include "dimensionedScalar.H"
 #include "volFields.H"
-#include "DynamicField.H"
-#include "surfaceBase.H"
+#include "geometricVoF.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                    Class interfaceRepresentation Declaration
+                        Class testAdvection Declaration
 \*---------------------------------------------------------------------------*/
-enum timeState
+
+class testAdvection
 {
-    oldState,
-    newState
-};
+private:
 
-class interfaceRepresentation
-{
-    // Private Data
- 
-    //- Coefficients dictionary
-    dictionary interfaceRepresentationCoeffs_;
+    //- Reference to the VoF Field
+    volScalarField& alpha1_;
 
+    //- Reference to the face fluxes
+    const surfaceScalarField& phi_;
 
-    //- No copy construct
-    interfaceRepresentation(const interfaceRepresentation&) = delete;
+    //- Reference to the velocity field
+    const volVectorField& U_;
 
-    //- No copy assignment
-    void operator=(const interfaceRepresentation&) = delete;
 
 public:
-    // Constructors
 
-        TypeName("interfaceRepresentation");
+    //- Runtime type information
+    TypeName("testAdvection");
 
-        //- Construct from components
-        interfaceRepresentation
+    //- Constructors
+
+        //- Construct given alpha, phi and velocity field. Note: phi should be
+        // divergence free up to a sufficient tolerance
+        testAdvection
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
-            const volVectorField& U,
-            const dictionary& dict
+            const volVectorField& U
         );
 
 
     //- Destructor
-        virtual ~interfaceRepresentation() = default;
+    virtual ~testAdvection() = default;
 
 
-    // Member Functions
+    void advect(const geometricVoF& geoVoF);
 
-        //- Access to the model dictionary
-        dictionary& modelDict()
-        {
-            return interfaceRepresentationCoeffs_;
-        }
-
-        //- Const access to the model dictionary
-        const dictionary& modelDict() const
-        {
-            return interfaceRepresentationCoeffs_;
-        }
-
-
-        virtual const surfaceBase& surface(timeState state) = 0;
 
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

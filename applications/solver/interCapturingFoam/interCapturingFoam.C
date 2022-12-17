@@ -1,4 +1,4 @@
-#include "interfaceCapturing.H"
+#include "interfaceCapturingMethod.H"
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
 #include "isoAdvection.H"

@@ -29,37 +29,56 @@ License
 #define makeInterfaceCapturingMethodTypes_H
 
 #include "addToRunTimeSelectionTable.H"
-#include "interfaceCapturing.H"
+#include "interfaceCapturingMethod.H"
 #include "dictionary.H"
+#include "interfaceCapturingModel.H"
+#include "interfaceRepresentationModel.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeInterfaceCapturingMethodTypes(advectType, reconType)            \
+#define makeInterfaceCapturingMethodTypes(Surface,SurfaceStrategy,AdvectionStrategy)            \
                                                                             \
     namespace Foam                                                          \
     {                                                                       \
-        typedef Foam::advection::advectType                                 \
+        typedef Foam::interfaceRepresentationModel                          \
             <                                                               \
-                Foam::interface::reconType                                  \
+                Surface,                                                    \
+                SurfaceStrategy                                             \
             >                                                               \
-            advectType##_##reconType;                                       \
+            Surface##_##SurfaceStrategy;                                    \
                                                                             \
         defineTemplateTypeNameAndDebug                                      \
         (                                                                   \
-            advectType##_##reconType,                                       \
+            Surface##_##SurfaceStrategy,                                    \
+            0                                                               \
+        );                                                                  \
+                                                                            \
+                                                                            \
+        typedef Foam::interfaceCapturingModel                               \
+            <                                                               \
+                Surface,                                                    \
+                SurfaceStrategy,                                            \
+                AdvectionStrategy                                           \
+            >                                                               \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy;              \
+                                                                            \
+        defineTemplateTypeNameAndDebug                                      \
+        (                                                                   \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
             0                                                               \
         );                                                                  \
                                                                             \
         addNamedToRunTimeSelectionTable                                     \
         (                                                                   \
-            interfaceCapturing,                                             \
-            advectType##_##reconType,                                       \
+            interfaceCapturingMethod,                                       \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
             dictionary,                                                     \
-            advectType##_##reconType                                        \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy               \
         );                                                                  \
     }
 
 #endif
 
 // ************************************************************************* //
+

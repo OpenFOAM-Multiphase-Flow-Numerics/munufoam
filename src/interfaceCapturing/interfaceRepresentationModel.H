@@ -24,24 +24,23 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interfaceRepresentation
+    Foam::interfaceRepresentationModel
 
 Description
     Original code supplied by Henning Scheufler, DLR (2019)
 
 SourceFiles
-    interfaceRepresentation.C
+    interfaceRepresentationModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef interfaceRepresentation_H
-#define interfaceRepresentation_H
+#ifndef interfaceRepresentationModel_H
+#define interfaceRepresentationModel_H
 
 #include "typeInfo.H"
 #include "dimensionedScalar.H"
 #include "volFields.H"
 #include "DynamicField.H"
-#include "surfaceBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,35 +49,38 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                    Class interfaceRepresentation Declaration
+                    Class interfaceRepresentationModel Declaration
 \*---------------------------------------------------------------------------*/
-enum timeState
-{
-    oldState,
-    newState
-};
 
-class interfaceRepresentation
+template<class Surface, class SurfaceStrategy>
+class interfaceRepresentationModel
+:
+    public interfaceRepresentation
 {
     // Private Data
- 
-    //- Coefficients dictionary
-    dictionary interfaceRepresentationCoeffs_;
 
+        dictionary interfaceRepresentationModelCoeffs_;
 
-    //- No copy construct
-    interfaceRepresentation(const interfaceRepresentation&) = delete;
+        Surface oldSurface_;
 
-    //- No copy assignment
-    void operator=(const interfaceRepresentation&) = delete;
+        Surface newSurface_;
+
+        SurfaceStrategy surfaceStrat_;
+
+        //- No copy construct
+        interfaceRepresentationModel(const interfaceRepresentationModel&) = delete;
+
+        //- No copy assignment
+        void operator=(const interfaceRepresentationModel&) = delete;
+
 
 public:
     // Constructors
 
-        TypeName("interfaceRepresentation");
+        TypeName("interfaceRepresentationModel");
 
         //- Construct from components
-        interfaceRepresentation
+        interfaceRepresentationModel
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -88,7 +90,7 @@ public:
 
 
     //- Destructor
-        virtual ~interfaceRepresentation() = default;
+    virtual ~interfaceRepresentationModel() = default;
 
 
     // Member Functions
@@ -96,17 +98,17 @@ public:
         //- Access to the model dictionary
         dictionary& modelDict()
         {
-            return interfaceRepresentationCoeffs_;
+            return interfaceRepresentationModelCoeffs_;
         }
 
         //- Const access to the model dictionary
         const dictionary& modelDict() const
         {
-            return interfaceRepresentationCoeffs_;
+            return interfaceRepresentationModelCoeffs_;
         }
 
-
-        virtual const surfaceBase& surface(timeState state) = 0;
+        //- Reconstruct interface
+        virtual const Surface& surface(timeState state) override;
 
 };
 
@@ -115,7 +117,9 @@ public:
 
 } // End namespace Foam
 
-
+#ifdef NoRepository
+#   include "interfaceRepresentationModel.C"
+#endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

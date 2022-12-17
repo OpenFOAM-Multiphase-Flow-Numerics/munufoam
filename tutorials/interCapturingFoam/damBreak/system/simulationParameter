@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-interfaceCapturingMethod isoAdvection;
-interfaceRepresentation  plicRDF;
+interfaceCapturingMethod geometricVoF_testRecon; //geometricVoF_testRecon_testAdvection
+interfaceRepresentation  testAdvection;
 
 // ************************************************************************* //

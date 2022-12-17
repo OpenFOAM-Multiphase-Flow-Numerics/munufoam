@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019-2020 DLR
+    Modified code Copyright (C) 2022 henning Scheufler
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,35 +25,27 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceRepresentation.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "testRecon.H"
 
 namespace Foam
 {
-    defineTypeNameAndDebug(interfaceRepresentation, 0);
+    defineTypeNameAndDebug(testRecon, 0);
 }
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interfaceRepresentation::interfaceRepresentation
+
+Foam::testRecon::testRecon
 (
-    volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
-    const dictionary& dict
+    const fvMesh& mesh
 )
-:
-    interfaceRepresentationCoeffs_(dict)
-    // alpha1_(alpha1),
-    // phi_(phi),
-    // U_(U)
-{}
+{
+
+}
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-
-
+void Foam::testRecon::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state)
+{
+    Info << "update surface"  << endl;
+}
 // ************************************************************************* //

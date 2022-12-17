@@ -5,7 +5,10 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019-2020 DLR
+    Copyright (C) 2016-2017 DHI
+    Modified code Copyright (C) 2016-2019 OpenCFD Ltd.
+    Modified code Copyright (C) 2018 Johan Roenby
+    Modified code Copyright (C) 2019 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -23,37 +26,66 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::testRecon
+
+Description
+   
+
+SourceFiles
+    testRecon.C
+
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceRepresentation.H"
+#ifndef testRecon_H
+#define testRecon_H
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+#include "typeInfo.H"
+#include "volFields.H"
+#include "geometricVoF.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(interfaceRepresentation, 0);
-}
+
+/*---------------------------------------------------------------------------*\
+                        Class testRecon Declaration
+\*---------------------------------------------------------------------------*/
+
+class testRecon
+{
+
+public:
+
+    //- Runtime type information
+    TypeName("testRecon");
+
+    //- Constructors
+
+        //- Construct given alpha, phi and velocity field. Note: phi should be
+        // divergence free up to a sufficient tolerance
+        testRecon
+        (
+            const fvMesh& mesh
+        );
+
+    //- Destructor
+    virtual ~testRecon() = default;
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::interfaceRepresentation::interfaceRepresentation
-(
-    volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
-    const dictionary& dict
-)
-:
-    interfaceRepresentationCoeffs_(dict)
-    // alpha1_(alpha1),
-    // phi_(phi),
-    // U_(U)
-{}
+    void update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state);
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

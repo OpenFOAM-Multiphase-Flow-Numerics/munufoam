@@ -38,7 +38,7 @@ incompressibleTwoPhaseMixture mixture(U, phi);
 volScalarField& alpha1(mixture.alpha1());
 volScalarField& alpha2(mixture.alpha2());
 
-autoPtr<interfaceCapturing> advector
+autoPtr<interfaceCapturingMethod> advector
 (
     interfaceCapturing::New(alpha1,phi,U)
 );

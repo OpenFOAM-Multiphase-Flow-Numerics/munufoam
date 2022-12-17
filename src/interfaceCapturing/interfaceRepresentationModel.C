@@ -25,19 +25,12 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceRepresentation.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-    defineTypeNameAndDebug(interfaceRepresentation, 0);
-}
-
+#include "interfaceRepresentationModel.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interfaceRepresentation::interfaceRepresentation
+template<class Surface, class SurfaceStrategy>
+Foam::interfaceRepresentationModel<Surface,SurfaceStrategy>::interfaceRepresentationModel
 (
     volScalarField& alpha1,
     const surfaceScalarField& phi,
@@ -45,15 +38,27 @@ Foam::interfaceRepresentation::interfaceRepresentation
     const dictionary& dict
 )
 :
-    interfaceRepresentationCoeffs_(dict)
-    // alpha1_(alpha1),
-    // phi_(phi),
-    // U_(U)
+    interfaceRepresentation(alpha1,phi,U,dict),
+    interfaceRepresentationModelCoeffs_(dict),
+    oldSurface_(alpha1,phi,U),
+    newSurface_(alpha1,phi,U),
+    surfaceStrat_(alpha1.mesh())
 {}
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+//- update the interface for the given time
+template<class Surface, class SurfaceStrategy>
+const Surface& Foam::interfaceRepresentationModel<Surface,SurfaceStrategy>::surface(timeState state)
+{
+    surfaceStrat_.update(newSurface_,oldSurface_,state);
+    if (state == timeState::newState)
+    {
+        return newSurface_;
+    }
+    return oldSurface_;
+};
 
 
 // ************************************************************************* //

@@ -20,17 +20,17 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceCapturing.H"
+#include "interfaceCapturingMethod.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::interfaceCapturing>
-Foam::interfaceCapturing::New
+Foam::autoPtr<Foam::interfaceCapturingMethod>
+Foam::interfaceCapturingMethod::New
 (
-        volScalarField& alpha1,
-        const surfaceScalarField& phi,
-        const volVectorField& U
+    volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
 )
 {
     IOdictionary fvSolutionDict
@@ -47,28 +47,28 @@ Foam::interfaceCapturing::New
     );
     const dictionary& alphaDict = fvSolutionDict.subDict("solvers").subDict(alpha1.name());
 
-    word interfaceCapturingTypeName = 
+    word interfaceCapturingMethodTypeName = 
     (
         alphaDict.get<word>("interfaceCapturingScheme") + "_"
       + alphaDict.get<word>("interfaceRepresentation") 
     );
 
     Info<< "Selecting interfaceCapturingScheme: "
-        << interfaceCapturingTypeName << endl;
+        << interfaceCapturingMethodTypeName << endl;
 
-    auto* ctorPtr = dictionaryConstructorTable(interfaceCapturingTypeName);
+    auto* ctorPtr = dictionaryConstructorTable(interfaceCapturingMethodTypeName);
 
     if (!ctorPtr)
     {
         FatalErrorInLookup
         (
-            "interfaceCapturingScheme",
-            interfaceCapturingTypeName,
+            "interfaceCapturingMethodScheme",
+            interfaceCapturingMethodTypeName,
             *dictionaryConstructorTablePtr_
         ) << exit(FatalError);
     }
 
-    return autoPtr<interfaceCapturing>(ctorPtr( alpha1, phi,U));
+    return autoPtr<interfaceCapturingMethod>(ctorPtr( alpha1, phi,U));
 }
 
 
