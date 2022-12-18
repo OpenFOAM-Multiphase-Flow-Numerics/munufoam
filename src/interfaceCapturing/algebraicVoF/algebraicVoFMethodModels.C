@@ -25,23 +25,23 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeGeometricVoFMethodTypes.H"
-#include "geometricVoF.H"
-#include "geometricVoFMethod.H"
+#include "makeAlegbraicVoFMethodTypes.H"
+#include "algebraicVoF.H"
+#include "algebraicVoFMethod.H"
 
-#include "testAdvection.H"
+#include "CICSAM.H"
 
-#include "testRecon.H"
+#include "standard.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeGeometricVoFMethodTypes
+makeAlegbraicVoFMethodTypes
 (
-    geometricVoFMethod,
-    geometricVoF,
-    testRecon,
-    testAdvection
+    algebraicVoFMethod,
+    algebraicVoF,
+    standard,
+    CICSAM
 );
 
 

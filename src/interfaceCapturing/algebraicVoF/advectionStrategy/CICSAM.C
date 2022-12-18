@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2017 OpenCFD Ltd.
+    Modified code Copyright (C) 2022 henning Scheufler
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,24 +25,34 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeGeometricVoFMethodTypes.H"
-#include "geometricVoF.H"
-#include "geometricVoFMethod.H"
+#include "CICSAM.H"
 
-#include "testAdvection.H"
+namespace Foam
+{
+    defineTypeNameAndDebug(CICSAM, 0);
+}
 
-#include "testRecon.H"
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-makeGeometricVoFMethodTypes
+Foam::CICSAM::CICSAM
 (
-    geometricVoFMethod,
-    geometricVoF,
-    testRecon,
-    testAdvection
-);
+    volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
+)
+:
+alpha1_(alpha1),
+phi_(phi),
+U_(U)
+{
 
+}
+
+
+void Foam::CICSAM::advect(const algebraicVoF& geoVoF)
+{
+    Info << "advect surface"  << endl;
+}
 
 // ************************************************************************* //

@@ -19,13 +19,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interfaceCapturingModel
+    Foam::geometricVoFModel
 
 Description
     Base class for advection schemes
 
 SourceFiles
-    interfaceCapturingModel.C
+    geometricVoFModel.C
 
 \*---------------------------------------------------------------------------*/
 
@@ -52,11 +52,11 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class interfaceCapturingModel Declaration
+                Class geometricVoFModel Declaration
 \*---------------------------------------------------------------------------*/
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-class interfaceCapturingModel
-:
+class geometricVoFModel
+: 
     public geometricVoFMethod
 {
     // Private Member Functions
@@ -65,30 +65,30 @@ class interfaceCapturingModel
     AdvectionStrategy advectionStrat_;
 
         //- Disallow copy construct
-        interfaceCapturingModel(const interfaceCapturingModel&);
+        geometricVoFModel(const geometricVoFModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const interfaceCapturingModel&);
+        void operator=(const geometricVoFModel&);
 
 
 public:
 
     //- Runtime type information
-    TypeName("interfaceCapturingModel");
+    TypeName("geometricVoFModel");
 
     // Selectors
 
-        //- Return a reference to the selected phaseChange model
-        static autoPtr<interfaceCapturingModel> New
-        (
-            volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
-        );
+        // //- Return a reference to the selected phaseChange model
+        // static autoPtr<geometricVoFModel> New
+        // (
+        //     volScalarField& alpha1,
+        //     const surfaceScalarField& phi,
+        //     const volVectorField& U
+        // );
 
 
     // Constructors
-        interfaceCapturingModel
+        geometricVoFModel
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -97,7 +97,7 @@ public:
 
 
     //- Destructor
-    virtual ~interfaceCapturingModel() = default;
+    virtual ~geometricVoFModel() = default;
 
 
     // Member Functions
@@ -117,7 +117,7 @@ public:
 } // End namespace Foam
 
 #ifdef NoRepository
-#   include "interfaceCapturingModel.C"
+#   include "geometricVoFModel.C"
 #endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -20,7 +20,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interfaceCapturingModel.H"
+#include "geometricVoFModel.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -29,7 +29,7 @@ License
 
 
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interfaceCapturingModel
+Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::geometricVoFModel
 (
     volScalarField& alpha1,
     const surfaceScalarField& phi,
@@ -43,27 +43,19 @@ Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interf
 
 }
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-// template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-// Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interfaceCapturingModel::~interfaceCapturingModel()
-// {
-    
-// }
-
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
         //- advection of the interface
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-void Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect()
+void Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect()
 {
     advectionStrat_.advect(surface(timeState::oldState));
 };
 
 
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-const Surface&  Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::surface
+const Surface&  Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::surface
 (
     timeState state
 )

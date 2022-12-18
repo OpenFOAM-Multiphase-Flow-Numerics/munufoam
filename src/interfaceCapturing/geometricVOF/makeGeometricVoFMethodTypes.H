@@ -25,19 +25,19 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef makeInterfaceCapturingMethodTypes_H
-#define makeInterfaceCapturingMethodTypes_H
+#ifndef makeGeometricVoFMethodTypes_H
+#define makeGeometricVoFMethodTypes_H
 
 #include "addToRunTimeSelectionTable.H"
 #include "interfaceCapturingMethod.H"
 #include "dictionary.H"
-#include "interfaceCapturingModel.H"
+#include "geometricVoFModel.H"
 #include "interfaceRepresentationModel.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeInterfaceCapturingMethodTypes(ICM,Surface,SurfaceStrategy,AdvectionStrategy)    \
+#define makeGeometricVoFMethodTypes(ICM,Surface,SurfaceStrategy,AdvectionStrategy)    \
                                                                             \
     namespace Foam                                                          \
     {                                                                       \
@@ -55,7 +55,7 @@ License
         );                                                                  \
                                                                             \
                                                                             \
-        typedef Foam::interfaceCapturingModel                               \
+        typedef Foam::geometricVoFModel                                     \
             <                                                               \
                 Surface,                                                    \
                 SurfaceStrategy,                                            \

@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2017 OpenCFD Ltd.
+    Modified code Copyright (C) 2022 henning Scheufler
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,24 +25,27 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeGeometricVoFMethodTypes.H"
-#include "geometricVoF.H"
-#include "geometricVoFMethod.H"
+#include "standard.H"
 
-#include "testAdvection.H"
+namespace Foam
+{
+    defineTypeNameAndDebug(standard, 0);
+}
 
-#include "testRecon.H"
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-makeGeometricVoFMethodTypes
+Foam::standard::standard
 (
-    geometricVoFMethod,
-    geometricVoF,
-    testRecon,
-    testAdvection
-);
+    const fvMesh& mesh
+)
+{
+
+}
 
 
+void Foam::standard::update(algebraicVoF& newSurf,algebraicVoF& oldSurf,Foam::timeState state)
+{
+    Info << "update surface"  << endl;
+}
 // ************************************************************************* //

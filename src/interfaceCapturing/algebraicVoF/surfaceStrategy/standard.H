@@ -5,7 +5,10 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2017 OpenCFD Ltd.
+    Copyright (C) 2016-2017 DHI
+    Modified code Copyright (C) 2016-2019 OpenCFD Ltd.
+    Modified code Copyright (C) 2018 Johan Roenby
+    Modified code Copyright (C) 2019 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -23,26 +26,66 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::standard
+
+Description
+   
+
+SourceFiles
+    standard.C
+
 \*---------------------------------------------------------------------------*/
 
-#include "makeGeometricVoFMethodTypes.H"
-#include "geometricVoF.H"
-#include "geometricVoFMethod.H"
+#ifndef standard_H
+#define standard_H
 
-#include "testAdvection.H"
+#include "typeInfo.H"
+#include "volFields.H"
+#include "algebraicVoF.H"
 
-#include "testRecon.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+/*---------------------------------------------------------------------------*\
+                        Class standard Declaration
+\*---------------------------------------------------------------------------*/
+
+class standard
+{
+
+public:
+
+    //- Runtime type information
+    TypeName("standard");
+
+    //- Constructors
+
+        //- Construct given alpha, phi and velocity field. Note: phi should be
+        // divergence free up to a sufficient tolerance
+        standard
+        (
+            const fvMesh& mesh
+        );
+
+    //- Destructor
+    virtual ~standard() = default;
+
+
+    void update(algebraicVoF& newSurf,algebraicVoF& oldSurf,Foam::timeState state);
+
+
+};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeGeometricVoFMethodTypes
-(
-    geometricVoFMethod,
-    geometricVoF,
-    testRecon,
-    testAdvection
-);
-
+#endif
 
 // ************************************************************************* //
