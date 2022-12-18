@@ -37,7 +37,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeInterfaceCapturingMethodTypes(Surface,SurfaceStrategy,AdvectionStrategy)            \
+#define makeInterfaceCapturingMethodTypes(ICM,Surface,SurfaceStrategy,AdvectionStrategy)    \
                                                                             \
     namespace Foam                                                          \
     {                                                                       \
@@ -67,6 +67,14 @@ License
         (                                                                   \
             Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
             0                                                               \
+        );                                                                  \
+                                                                            \
+        addNamedToRunTimeSelectionTable                                     \
+        (                                                                   \
+            ICM,                                                            \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
+            dictionary,                                                     \
+            Surface##_##SurfaceStrategy##_##AdvectionStrategy               \
         );                                                                  \
                                                                             \
         addNamedToRunTimeSelectionTable                                     \

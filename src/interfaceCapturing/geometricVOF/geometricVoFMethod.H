@@ -19,29 +19,31 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interfaceCapturingModel
+    Foam::geometricVoFMethod
 
 Description
     Base class for advection schemes
 
 SourceFiles
-    interfaceCapturingModel.C
+    geometricVoFMethod.C
+    newgeometricVoFMethod.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef interfaceCapturingModel_H
-#define interfaceCapturingModel_H
+#ifndef geometricVoFMethod_H
+#define geometricVoFMethod_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
-#include "geometricVoFMethod.H"
-#include "interfaceCapturingMethod.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "IOdictionary.H"
-#include "interfaceRepresentationModel.H"
+
+#include "interfaceRepresentation.H"
+#include "interfaceCapturingMethod.H"
+#include "geometricVoF.H"
 
 
 
@@ -52,34 +54,45 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class interfaceCapturingModel Declaration
+                Class geometricVoFMethod Declaration
 \*---------------------------------------------------------------------------*/
-template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-class interfaceCapturingModel
-:
-    public geometricVoFMethod
-{
-    // Private Member Functions
 
-    interfaceRepresentationModel<Surface,SurfaceStrategy> surface_;
-    AdvectionStrategy advectionStrat_;
+class geometricVoFMethod
+:
+    public interfaceCapturingMethod
+{
+
+private:
 
         //- Disallow copy construct
-        interfaceCapturingModel(const interfaceCapturingModel&);
+        geometricVoFMethod(const geometricVoFMethod&);
 
         //- Disallow default bitwise assignment
-        void operator=(const interfaceCapturingModel&);
-
+        void operator=(const geometricVoFMethod&);
 
 public:
 
     //- Runtime type information
-    TypeName("interfaceCapturingModel");
+    TypeName("geometricVoFMethod");
+
+    //- Declare run-time constructor selection table
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        geometricVoFMethod,
+        dictionary,
+        (
+            volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
+        ),
+        (alpha1, phi,U)
+    );
 
     // Selectors
 
         //- Return a reference to the selected phaseChange model
-        static autoPtr<interfaceCapturingModel> New
+        static autoPtr<geometricVoFMethod> New
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -88,7 +101,9 @@ public:
 
 
     // Constructors
-        interfaceCapturingModel
+
+        //- Construct from dictionary
+        geometricVoFMethod
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -97,17 +112,49 @@ public:
 
 
     //- Destructor
-    virtual ~interfaceCapturingModel() = default;
+    virtual ~geometricVoFMethod() = default;
 
 
     // Member Functions
 
-        // //- advection of the interface
-        void advect() override;
+        //- advection of the interface
+        virtual void advect() = 0;
+
+        //- advection of the interface with source terms
+        // virtual void advect
+        // (
+        //     const volScalarField::Internal& Sp,
+        //     const volScalarField::Internal& Su
+        // ) = 0;
 
         //- Reconstruct interface
-        const Surface& surface(timeState state) override;
+        virtual const geometricVoF& surface(timeState state) = 0;
 
+        // template < class Type >
+        // tmp<surfaceScalarField> getRhoPhi
+        // (
+        //     const Type rho1,
+        //     const Type rho2
+        // ) const
+        // {
+        //     return tmp<surfaceScalarField>
+        //     (
+        //         new surfaceScalarField
+        //         (
+        //             "rhoPhi",
+        //             (rho1 - rho2)*alphaPhi_ + rho2*phi_
+        //         )
+        //     );
+        // }
+        
+        // const surfaceScalarField& alphaPhi() const
+        // {
+        //     return alphaPhi_;
+        // }
+
+        // virtual const interfaceRepresentation& surf() const  = override;
+
+        // virtual interfaceRepresentation& surf() = override;
 
 };
 
@@ -116,9 +163,6 @@ public:
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "interfaceCapturingModel.C"
-#endif
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif

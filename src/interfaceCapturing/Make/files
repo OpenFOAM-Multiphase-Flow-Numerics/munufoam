@@ -21,9 +21,11 @@ newInterfaceCapturingMethod.C
 interfaceRepresentation.C
 surfaceBase.C
 
-geometricVOF/geometricVoF.C
+geometricVOF/geometricVoFMethod.C
+
 geometricVOF/advectionStrategy/testAdvection.C
 geometricVOF/surfaceStrategy/testRecon.C
+geometricVOF/geometricVoF.C
 /*geometricVOF/cellCuts/cutCell/cutCell.C*/
 /*geometricVOF/cellCuts/cutCell/cutCellPLIC.C*/
 /*geometricVOF/cellCuts/cutCell/cutCellIso.C*/
@@ -39,6 +41,7 @@ geometricVOF/surfaceStrategy/testRecon.C
 
 /* Run-time selectable interfaceCapturing */
 
-interfaceCapturingModels.C
+/*interfaceCapturingModels.C*/
+geometricVOF/geometricVoFMethodModels.C
 
 LIB = $(FOAM_USER_LIBBIN)/libinterfaceCapturing

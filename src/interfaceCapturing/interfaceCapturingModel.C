@@ -36,7 +36,7 @@ Foam::interfaceCapturingModel<Surface,SurfaceStrategy,AdvectionStrategy>::interf
     const volVectorField& U
 )
 :
-    interfaceCapturingMethod(alpha1,phi,U),
+    geometricVoFMethod(alpha1,phi,U),
     surface_(alpha1,phi,U,alpha1.mesh().solverDict(alpha1.name())),
     advectionStrat_(alpha1,phi,U)
 {
