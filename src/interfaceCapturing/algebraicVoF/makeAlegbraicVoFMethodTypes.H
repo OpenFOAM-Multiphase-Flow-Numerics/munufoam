@@ -48,12 +48,6 @@ License
             >                                                               \
             Surface##_##SurfaceStrategy;                                    \
                                                                             \
-        defineTemplateTypeNameAndDebug                                      \
-        (                                                                   \
-            Surface##_##SurfaceStrategy,                                    \
-            0                                                               \
-        );                                                                  \
-                                                                            \
                                                                             \
         typedef Foam::algebraicVoFModel                                     \
             <                                                               \

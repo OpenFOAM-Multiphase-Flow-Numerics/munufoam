@@ -102,8 +102,11 @@ public:
 
     // Member Functions
 
-        // //- advection of the interface
-        void advect() override;
+        virtual void advect
+        (
+            const volScalarField::Internal& Sp,
+            const volScalarField::Internal& Su
+        ) override;
 
         //- Reconstruct interface
         const Surface& surface(timeState state) override;

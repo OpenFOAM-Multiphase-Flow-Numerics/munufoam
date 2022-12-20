@@ -90,6 +90,12 @@ public:
 
     void advect(const geometricVoF& geoVoF);
 
+    void advect
+    (
+        const geometricVoF& geoVoF,
+        const volScalarField::Internal& Sp,
+        const volScalarField::Internal& Su
+    );
 
 };
 

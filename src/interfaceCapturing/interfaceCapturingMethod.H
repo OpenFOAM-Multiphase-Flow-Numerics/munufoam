@@ -43,6 +43,7 @@ SourceFiles
 
 #include "interfaceRepresentation.H"
 #include "surfaceBase.H"
+#include "geometricZeroField.H"
 
 
 
@@ -51,6 +52,12 @@ SourceFiles
 
 namespace Foam
 {
+
+enum timeState
+{
+    oldState,
+    newState
+};
 
 /*---------------------------------------------------------------------------*\
                 Class interfaceCapturingMethod Declaration
@@ -147,14 +154,41 @@ public:
     // Member Functions
 
         //- advection of the interface
-        virtual void advect() = 0;
+        virtual void advect()
+        {
+
+            volScalarField::Internal Sp
+            (
+                IOobject
+                (
+                    "Sp",
+                    alpha1_.mesh().time().timeName(),
+                    alpha1_.mesh()
+                ),
+                alpha1_.mesh(),
+                dimensionedScalar(dimless/dimTime, Zero)
+            );
+
+            volScalarField::Internal Su
+            (
+                IOobject
+                (
+                    "Su",
+                    alpha1_.mesh().time().timeName(),
+                    alpha1_.mesh()
+                ),
+                alpha1_.mesh(),
+                dimensionedScalar(dimless/dimTime, Zero)
+            );
+            advect(Sp,Su);
+        };
 
         //- advection of the interface with source terms
-        // virtual void advect
-        // (
-        //     const volScalarField::Internal& Sp,
-        //     const volScalarField::Internal& Su
-        // ) = 0;
+        virtual void advect
+        (
+            const volScalarField::Internal& Sp,
+            const volScalarField::Internal& Su
+        ) = 0;
 
         //- Reconstruct interface
         virtual const surfaceBase& surface(timeState state) = 0;

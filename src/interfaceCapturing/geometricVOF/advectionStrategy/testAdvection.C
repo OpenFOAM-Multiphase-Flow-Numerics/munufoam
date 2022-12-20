@@ -55,4 +55,13 @@ void Foam::testAdvection::advect(const geometricVoF& geoVoF)
     Info << "advect surface"  << endl;
 }
 
+void Foam::testAdvection::advect
+(
+    const geometricVoF& geoVoF,
+    const volScalarField::Internal& Sp,
+    const volScalarField::Internal& Su
+)
+{
+    Info << "advect surface"  << endl;
+}
 // ************************************************************************* //

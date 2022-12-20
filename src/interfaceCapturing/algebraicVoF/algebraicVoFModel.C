@@ -53,6 +53,16 @@ void Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect(
     advectionStrat_.advect(surface(timeState::oldState));
 };
 
+//- advection of the interface
+template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
+void Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect
+(
+    const volScalarField::Internal& Sp,
+    const volScalarField::Internal& Su
+)
+{
+    advectionStrat_.advect(surface(timeState::oldState),Sp,Su);
+};
 
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
 const Surface&  Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::surface

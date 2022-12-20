@@ -41,44 +41,12 @@ Foam::surfaceBase::surfaceBase
     const volVectorField& U
 )
 :
-    alpha1_(alpha1),
-    phi_(phi),
-    U_(U),
-    normal_
-    (
-        IOobject
-        (
-            IOobject::groupName("interfaceNormal", alpha1.group()),
-            alpha1_.mesh().time().timeName(),
-            alpha1_.mesh(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        //     dict.getOrDefault("writeFields",false)
-        //   ? IOobject::AUTO_WRITE
-        //   : IOobject::NO_WRITE
-        ),
-        alpha1_.mesh(),
-        dimensionedVector(dimArea, Zero)
-    ),
-    centre_
-    (
-        IOobject
-        (
-            IOobject::groupName("interfaceCentre", alpha1.group()),
-            alpha1_.mesh().time().timeName(),
-            alpha1_.mesh(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        //     dict.getOrDefault("writeFields",false)
-        //   ? IOobject::AUTO_WRITE
-        //   : IOobject::NO_WRITE
-        ),
-        alpha1_.mesh(),
-        dimensionedVector(dimLength, Zero)
-    ),
-    interfaceCell_(alpha1_.mesh().nCells(), false),
-    interfaceLabels_(0.2*alpha1_.mesh().nCells()),
-    timeIndexAndIter_(0, 0)
+    alpha1(alpha1),
+    phi(phi),
+    U(U),
+    interfaceCell(alpha1.mesh().nCells(), false),
+    interfaceLabels(0.2*alpha1.mesh().nCells()),
+    timeIndexAndIter(0, 0)
 {
 
 }

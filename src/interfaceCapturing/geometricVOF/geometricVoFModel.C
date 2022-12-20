@@ -46,11 +46,15 @@ Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::geometricVoF
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-        //- advection of the interface
+//- advection of the interface
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-void Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect()
+void Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect
+(
+    const volScalarField::Internal& Sp,
+    const volScalarField::Internal& Su
+)
 {
-    advectionStrat_.advect(surface(timeState::oldState));
+    advectionStrat_.advect(surface(timeState::oldState),Sp,Su);
 };
 
 

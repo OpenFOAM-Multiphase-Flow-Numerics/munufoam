@@ -1,6 +1,7 @@
 #include "fvCFD.H"
 //#include "fvMesh.H"
 #include "interfaceCapturingMethod.H"
+#include "geometricVoFMethod.H"
 // #include "isoAdvection.H"
 // #include "EulerDdtScheme.H"
 #include "localEulerDdtScheme.H"
@@ -13,6 +14,7 @@
 // #include "CorrectPhi.H"
 // #include "fvcSmooth.H"
 // #include "surfaceForces.H"
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -27,6 +29,13 @@ int main(int argc, char *argv[])
     #include "createFields.H"
 
     advector->advect();
+
+    Info << "toc ICM" << interfaceCapturingMethod::dictionaryConstructorTablePtr_->sortedToc() << endl;
+    Info << "toc geometricVoF" << geometricVoFMethod::dictionaryConstructorTablePtr_->sortedToc() << endl;
+
+    mesh.lookupObject<interfaceCapturingMethod>("interfaceCapturingMethod");
+    mesh.lookupObject<geometricVoF>("interfaceCapturingMethod");
+
 
 
     // #include "initCorrectPhi.H"

@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2017 OpenCFD Ltd.
+    Modified code Copyright (C) 2022 henning Scheufler
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -25,33 +25,45 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeAlegbraicVoFMethodTypes.H"
-#include "algebraicVoF.H"
-#include "algebraicVoFMethod.H"
-
-#include "CICSAM.H"
 #include "MULESMethod.H"
 
-#include "standard.H"
+namespace Foam
+{
+    defineTypeNameAndDebug(MULESMethod, 0);
+}
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-makeAlegbraicVoFMethodTypes
+Foam::MULESMethod::MULESMethod
 (
-    algebraicVoFMethod,
-    algebraicVoF,
-    standard,
-    CICSAM
-);
+    volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
+)
+:
+alpha1_(alpha1),
+phi_(phi),
+U_(U)
+{
 
-makeAlegbraicVoFMethodTypes
+}
+
+
+void Foam::MULESMethod::advect(const algebraicVoF& algVoF)
+{
+    Info << "advect surface"  << endl;
+}
+
+
+void Foam::MULESMethod::advect
 (
-    algebraicVoFMethod,
-    algebraicVoF,
-    standard,
-    MULESMethod
-);
-
+    const algebraicVoF& algVoF,
+    const volScalarField::Internal& Sp,
+    const volScalarField::Internal& Su
+)
+{
+    algVoF.alpha1;
+}
 
 // ************************************************************************* //

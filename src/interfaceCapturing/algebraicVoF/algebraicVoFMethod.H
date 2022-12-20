@@ -118,7 +118,7 @@ public:
     // Member Functions
 
         //- advection of the interface
-        virtual void advect() = 0;
+        // virtual void advect() = 0;
 
         //- advection of the interface with source terms
         // virtual void advect

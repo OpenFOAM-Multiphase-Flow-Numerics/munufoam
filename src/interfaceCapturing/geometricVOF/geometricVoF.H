@@ -80,6 +80,12 @@ public:
     //- Destructor
     virtual ~geometricVoF() = default;
 
+    //- Interface area normals
+    volVectorField normal;
+
+    //- Interface centres
+    volVectorField centre;
+
 };
 
 

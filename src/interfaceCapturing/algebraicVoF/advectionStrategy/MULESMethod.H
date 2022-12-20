@@ -27,18 +27,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CICSAM
+    Foam::MULESMethod
 
 Description
    
 
 SourceFiles
-    CICSAM.C
+    MULESMethod.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CICSAM_H
-#define CICSAM_H
+#ifndef MULESMethod_H
+#define MULESMethod_H
 
 #include "typeInfo.H"
 #include "volFields.H"
@@ -50,10 +50,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class CICSAM Declaration
+                        Class MULESMethod Declaration
 \*---------------------------------------------------------------------------*/
 
-class CICSAM
+class MULESMethod
 {
 private:
 
@@ -70,13 +70,13 @@ private:
 public:
 
     //- Runtime type information
-    TypeName("CICSAM");
+    TypeName("MULESMethod");
 
     //- Constructors
 
         //- Construct given alpha, phi and velocity field. Note: phi should be
         // divergence free up to a sufficient tolerance
-        CICSAM
+        MULESMethod
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
@@ -85,8 +85,7 @@ public:
 
 
     //- Destructor
-    virtual ~CICSAM() = default;
-
+    virtual ~MULESMethod() = default;
 
     void advect(const algebraicVoF& algVoF);
 
@@ -96,6 +95,7 @@ public:
         const volScalarField::Internal& Sp,
         const volScalarField::Internal& Su
     );
+
 
 };
 

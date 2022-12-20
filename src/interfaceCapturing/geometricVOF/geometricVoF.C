@@ -41,7 +41,33 @@ Foam::geometricVoF::geometricVoF
     const volVectorField& U
 )
 :
-    surfaceBase(alpha1,phi,U)
+    surfaceBase(alpha1,phi,U),
+    normal
+    (
+        IOobject
+        (
+            IOobject::groupName("interfaceNormal", alpha1.group()),
+            alpha1.mesh().time().timeName(),
+            alpha1.mesh(),
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        alpha1.mesh(),
+        dimensionedVector(dimArea, Zero)
+    ),
+    centre
+    (
+        IOobject
+        (
+            IOobject::groupName("interfaceCentre", alpha1.group()),
+            alpha1.mesh().time().timeName(),
+            alpha1.mesh(),
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        alpha1.mesh(),
+        dimensionedVector(dimLength, Zero)
+    )
 {
 
 }

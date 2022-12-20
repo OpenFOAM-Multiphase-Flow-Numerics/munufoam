@@ -50,9 +50,19 @@ U_(U)
 }
 
 
-void Foam::CICSAM::advect(const algebraicVoF& geoVoF)
+void Foam::CICSAM::advect(const algebraicVoF& algVoF)
 {
     Info << "advect surface"  << endl;
 }
 
+
+void Foam::CICSAM::advect
+(
+    const algebraicVoF& algVoF,
+    const volScalarField::Internal& Sp,
+    const volScalarField::Internal& Su
+)
+{
+    Info << "advect surface"  << endl;
+}
 // ************************************************************************* //

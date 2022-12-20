@@ -73,28 +73,22 @@ public:
     // public member
 
         //- Reference to the VoF Field
-        volScalarField& alpha1_;
+        volScalarField& alpha1;
 
         //- Reference to the face fluxes
-        const surfaceScalarField& phi_;
+        const surfaceScalarField& phi;
 
         //- Reference to the velocity field
-        const volVectorField& U_;
-
-        //- Interface area normals
-        volVectorField normal_;
-
-        //- Interface centres
-        volVectorField centre_;
+        const volVectorField& U;
 
         //- Is interface cell?
-        boolList interfaceCell_;
+        boolList interfaceCell;
 
         //- List of cell labels that have an interface
-        DynamicField<label> interfaceLabels_;
+        DynamicField<label> interfaceLabels;
 
         //- Store timeindex/iteration to avoid multiple reconstruction
-        mutable Pair<label> timeIndexAndIter_;
+        mutable Pair<label> timeIndexAndIter;
 
 };
 

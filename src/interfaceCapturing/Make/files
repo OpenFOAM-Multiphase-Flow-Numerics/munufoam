@@ -30,6 +30,7 @@ geometricVOF/geometricVoFMethodModels.C
 
 algebraicVoF/algebraicVoFMethod.C
 algebraicVoF/advectionStrategy/CICSAM.C
+algebraicVoF/advectionStrategy/MULESMethod.C
 algebraicVoF/surfaceStrategy/standard.C
 algebraicVoF/algebraicVoF.C
 
