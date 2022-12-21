@@ -29,7 +29,7 @@ License
 #include "algebraicVoF.H"
 #include "algebraicVoFMethod.H"
 
-#include "CICSAM.H"
+#include "implicitAdvection.H"
 #include "MULESMethod.H"
 
 #include "standard.H"
@@ -42,7 +42,7 @@ makeAlegbraicVoFMethodTypes
     algebraicVoFMethod,
     algebraicVoF,
     standard,
-    CICSAM
+    implicitAdvection
 );
 
 makeAlegbraicVoFMethodTypes

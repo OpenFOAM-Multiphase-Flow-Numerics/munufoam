@@ -43,7 +43,6 @@ SourceFiles
 #define gradAlpha_H
 
 #include "typeInfo.H"
-#include "interfaceRepresentation.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"

@@ -37,8 +37,10 @@ Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::algebraicVoF
 )
 :
     algebraicVoFMethod(alpha1,phi,U),
-    surface_(alpha1,phi,U,alpha1.mesh().solverDict(alpha1.name())),
-    advectionStrat_(alpha1,phi,U)
+    oldSurface_(alpha1,phi,U),
+    newSurface_(alpha1,phi,U),
+    surfaceStrat_(alpha1.mesh(),alpha1.mesh().solverDict(alpha1.name())),
+    advectionStrat_(alpha1,alphaPhi_,phi,U)
 {
 
 }
@@ -46,12 +48,6 @@ Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::algebraicVoF
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-        //- advection of the interface
-template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
-void Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect()
-{
-    advectionStrat_.advect(surface(timeState::oldState));
-};
 
 //- advection of the interface
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
@@ -61,7 +57,7 @@ void Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect
     const volScalarField::Internal& Su
 )
 {
-    advectionStrat_.advect(surface(timeState::oldState),Sp,Su);
+    advectionStrat_.advect(newSurface_,oldSurface_,Sp,Su);
 };
 
 template<class Surface, class SurfaceStrategy, class AdvectionStrategy>
@@ -70,7 +66,12 @@ const Surface&  Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrateg
     timeState state
 )
 {
-    return surface_.surface(state);
+    surfaceStrat_.update(newSurface_,oldSurface_,state);
+    if (state == timeState::newState)
+    {
+        return newSurface_;
+    }
+    return oldSurface_;
 };
 
 // ************************************************************************* //

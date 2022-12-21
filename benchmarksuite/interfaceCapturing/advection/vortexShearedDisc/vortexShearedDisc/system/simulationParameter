@@ -19,8 +19,10 @@ nx	128;
 ny	1;
 nz	128;
 
-SUBCYL       1;
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+CFL             0.5;
+SUBCYL          1;
+MethodType      algebraicVoF;
+advectStrat     implicitAdvection;
+reconStrat      standard;
 
 // ************************************************************************* //

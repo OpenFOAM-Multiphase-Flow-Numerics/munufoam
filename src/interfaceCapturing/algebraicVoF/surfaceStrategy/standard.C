@@ -37,7 +37,8 @@ namespace Foam
 
 Foam::standard::standard
 (
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 {
 

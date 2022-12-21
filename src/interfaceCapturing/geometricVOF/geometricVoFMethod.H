@@ -41,7 +41,6 @@ SourceFiles
 #include "autoPtr.H"
 #include "IOdictionary.H"
 
-#include "interfaceRepresentation.H"
 #include "interfaceCapturingMethod.H"
 #include "geometricVoF.H"
 

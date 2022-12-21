@@ -41,7 +41,6 @@ SourceFiles
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "IOdictionary.H"
-#include "interfaceRepresentationModel.H"
 
 
 
@@ -61,7 +60,15 @@ class algebraicVoFModel
 {
     // Private Member Functions
 
-    interfaceRepresentationModel<Surface,SurfaceStrategy> surface_;
+    // interfaceRepresentationModel<Surface,SurfaceStrategy> surface_;
+    dictionary interfaceRepresentationModelCoeffs_;
+
+    Surface oldSurface_;
+
+    Surface newSurface_;
+
+    SurfaceStrategy surfaceStrat_;
+
     AdvectionStrategy advectionStrat_;
 
         //- Disallow copy construct
@@ -102,8 +109,6 @@ public:
 
     // Member Functions
 
-        // //- advection of the interface
-        void advect() override;
 
         virtual void advect
         (

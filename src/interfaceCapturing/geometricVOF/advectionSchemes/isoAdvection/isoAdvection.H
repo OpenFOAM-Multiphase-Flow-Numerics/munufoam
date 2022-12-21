@@ -64,11 +64,11 @@ SourceFiles
 #include "surfaceFields.H"
 #include "fvc.H"
 #include "className.H"
-#include "interfaceRepresentation.H"
 #include "cutFaceAdvect.H"
 #include "bitSet.H"
 #include "zeroField.H"
 #include "localEulerDdtScheme.H"
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -27,22 +27,23 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CICSAM
+    Foam::implicitAdvection
 
 Description
    
 
 SourceFiles
-    CICSAM.C
+    implicitAdvection.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CICSAM_H
-#define CICSAM_H
+#ifndef implicitAdvection_H
+#define implicitAdvection_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "algebraicVoF.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,10 +51,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class CICSAM Declaration
+                        Class implicitAdvection Declaration
 \*---------------------------------------------------------------------------*/
 
-class CICSAM
+class implicitAdvection
 {
 private:
 
@@ -61,38 +62,41 @@ private:
     volScalarField& alpha1_;
 
     //- Reference to the face fluxes
+    surfaceScalarField& alphaPhi_;
+
+    //- Reference to the face fluxes
     const surfaceScalarField& phi_;
 
     //- Reference to the velocity field
     const volVectorField& U_;
 
+    label nAlphaCorr_;
 
 public:
 
     //- Runtime type information
-    TypeName("CICSAM");
+    TypeName("implicitAdvection");
 
     //- Constructors
 
         //- Construct given alpha, phi and velocity field. Note: phi should be
         // divergence free up to a sufficient tolerance
-        CICSAM
+        implicitAdvection
         (
             volScalarField& alpha1,
+            surfaceScalarField& alphaPhi,
             const surfaceScalarField& phi,
             const volVectorField& U
         );
 
 
     //- Destructor
-    virtual ~CICSAM() = default;
-
-
-    void advect(const algebraicVoF& algVoF);
+    virtual ~implicitAdvection() = default;
 
     void advect
     (
-        const algebraicVoF& algVoF,
+        algebraicVoF& algVoFNew,
+        algebraicVoF& algVoFOld,
         const volScalarField::Internal& Sp,
         const volScalarField::Internal& Su
     );

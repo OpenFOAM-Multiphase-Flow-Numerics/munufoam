@@ -43,6 +43,7 @@ SourceFiles
 #include "typeInfo.H"
 #include "volFields.H"
 #include "algebraicVoF.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,10 +62,52 @@ private:
     volScalarField& alpha1_;
 
     //- Reference to the face fluxes
+    surfaceScalarField& alphaPhi_;
+
+    //- Reference to the face fluxes
     const surfaceScalarField& phi_;
 
     //- Reference to the velocity field
     const volVectorField& U_;
+
+        //- Reference to mesh
+        const fvMesh& mesh_;
+
+        volScalarField alpha2_;
+
+        surfaceScalarField talphaPhiCorr0_;
+
+        const dimensionedScalar deltaN_;
+
+        surfaceScalarField nHatf_;
+
+
+        //- Reference to mesh
+        bool LTS_;
+
+        label nAlphaCorr_;
+
+        label nAlphaSubCycles_;
+
+        bool MULESCorr_;
+
+        // Apply the compression correction from the previous iteration
+        // Improves efficiency for steady-simulations but can only be applied
+        // once the alpha field is reasonably steady, i.e. fully developed
+        bool alphaApplyPrevCorr_;//
+
+        // Isotropic compression coefficient
+        scalar icAlpha_;
+
+        // Shear compression coefficient
+        scalar scAlpha_;
+
+        //- Compression coefficient
+        scalar cAlpha_;
+
+        bool alphaRestart_;
+
+        void updateNHatf();
 
 
 public:
@@ -79,6 +122,7 @@ public:
         MULESMethod
         (
             volScalarField& alpha1,
+            surfaceScalarField& alphaPhi,
             const surfaceScalarField& phi,
             const volVectorField& U
         );
@@ -91,7 +135,8 @@ public:
 
     void advect
     (
-        const algebraicVoF& algVoF,
+        algebraicVoF& algVoFNew,
+        algebraicVoF& algVoFOld,
         const volScalarField::Internal& Sp,
         const volScalarField::Internal& Su
     );

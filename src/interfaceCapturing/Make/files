@@ -18,7 +18,6 @@ markInterfaceRegion/markInterfaceRegion.C
 interfaceCapturingMethod.C
 newInterfaceCapturingMethod.C
 
-interfaceRepresentation.C
 surfaceBase.C
 
 geometricVOF/geometricVoFMethod.C
@@ -29,9 +28,13 @@ geometricVOF/geometricVoF.C
 geometricVOF/geometricVoFMethodModels.C
 
 algebraicVoF/algebraicVoFMethod.C
-algebraicVoF/advectionStrategy/CICSAM.C
+algebraicVoF/advectionStrategy/implicitAdvection.C
 algebraicVoF/advectionStrategy/MULESMethod.C
 algebraicVoF/surfaceStrategy/standard.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/CICSAM/CICSAM.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/HRIC/HRIC.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/mHRIC/mHRIC.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/vofCompression/vofCompression.C
 algebraicVoF/algebraicVoF.C
 
 algebraicVoF/algebraicVoFMethodModels.C

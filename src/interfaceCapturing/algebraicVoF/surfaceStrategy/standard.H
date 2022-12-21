@@ -43,6 +43,7 @@ SourceFiles
 #include "typeInfo.H"
 #include "volFields.H"
 #include "algebraicVoF.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -67,7 +68,8 @@ public:
         // divergence free up to a sufficient tolerance
         standard
         (
-            const fvMesh& mesh
+            const fvMesh& mesh,
+            const dictionary& dict
         );
 
     //- Destructor

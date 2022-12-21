@@ -38,11 +38,13 @@ namespace Foam
 Foam::testAdvection::testAdvection
 (
     volScalarField& alpha1,
+    surfaceScalarField& alphaPhi,
     const surfaceScalarField& phi,
     const volVectorField& U
 )
 :
 alpha1_(alpha1),
+alphaPhi_(alphaPhi),
 phi_(phi),
 U_(U)
 {
@@ -50,14 +52,12 @@ U_(U)
 }
 
 
-void Foam::testAdvection::advect(const geometricVoF& geoVoF)
-{
-    Info << "advect surface"  << endl;
-}
+
 
 void Foam::testAdvection::advect
 (
-    const geometricVoF& geoVoF,
+    geometricVoF& geoVoFNew,
+    geometricVoF& geoVoFOld,
     const volScalarField::Internal& Sp,
     const volScalarField::Internal& Su
 )

@@ -43,6 +43,7 @@ SourceFiles
 #include "typeInfo.H"
 #include "volFields.H"
 #include "geometricVoF.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,6 +60,9 @@ private:
 
     //- Reference to the VoF Field
     volScalarField& alpha1_;
+
+    //- Reference to the face fluxes
+    surfaceScalarField& alphaPhi_;
 
     //- Reference to the face fluxes
     const surfaceScalarField& phi_;
@@ -79,6 +83,7 @@ public:
         testAdvection
         (
             volScalarField& alpha1,
+            surfaceScalarField& alphaPhi,
             const surfaceScalarField& phi,
             const volVectorField& U
         );
@@ -88,11 +93,11 @@ public:
     virtual ~testAdvection() = default;
 
 
-    void advect(const geometricVoF& geoVoF);
 
     void advect
     (
-        const geometricVoF& geoVoF,
+        geometricVoF& geoVoFNew,
+        geometricVoF& geoVoFOld,
         const volScalarField::Internal& Sp,
         const volScalarField::Internal& Su
     );

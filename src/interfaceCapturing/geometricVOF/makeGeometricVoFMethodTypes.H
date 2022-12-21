@@ -32,7 +32,6 @@ License
 #include "interfaceCapturingMethod.H"
 #include "dictionary.H"
 #include "geometricVoFModel.H"
-#include "interfaceRepresentationModel.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,12 +40,6 @@ License
                                                                             \
     namespace Foam                                                          \
     {                                                                       \
-        typedef Foam::interfaceRepresentationModel                          \
-            <                                                               \
-                Surface,                                                    \
-                SurfaceStrategy                                             \
-            >                                                               \
-            Surface##_##SurfaceStrategy;                                    \
                                                                             \
                                                                             \
         typedef Foam::geometricVoFModel                                     \

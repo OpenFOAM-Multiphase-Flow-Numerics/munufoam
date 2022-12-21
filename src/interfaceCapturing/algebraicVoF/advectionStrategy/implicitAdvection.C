@@ -25,44 +25,75 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "CICSAM.H"
+#include "implicitAdvection.H"
+#include "fvCFD.H"
+#include "CMULES.H"
 
 namespace Foam
 {
-    defineTypeNameAndDebug(CICSAM, 0);
+    defineTypeNameAndDebug(implicitAdvection, 0);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-Foam::CICSAM::CICSAM
+Foam::implicitAdvection::implicitAdvection
 (
     volScalarField& alpha1,
+    surfaceScalarField& alphaPhi,
     const surfaceScalarField& phi,
     const volVectorField& U
 )
 :
-alpha1_(alpha1),
-phi_(phi),
-U_(U)
+    alpha1_(alpha1),
+    alphaPhi_(alphaPhi),
+    phi_(phi),
+    U_(U),
+    nAlphaCorr_(1)
 {
-
+    const dictionary& alphaControls = alpha1_.mesh().solverDict(alpha1_.name());
+    nAlphaCorr_= alphaControls.get<label>("nAlphaCorr");
 }
 
 
-void Foam::CICSAM::advect(const algebraicVoF& algVoF)
-{
-    Info << "advect surface"  << endl;
-}
 
-
-void Foam::CICSAM::advect
+void Foam::implicitAdvection::advect
 (
-    const algebraicVoF& algVoF,
+    algebraicVoF& algVoFNew,
+    algebraicVoF& algVoFOld,
     const volScalarField::Internal& Sp,
     const volScalarField::Internal& Su
 )
 {
-    Info << "advect surface"  << endl;
+    word alphaScheme("div(phi,alpha)");
+
+    const fvMesh& mesh = alpha1_.mesh();
+
+    for (int aCorr=0; aCorr<nAlphaCorr_; aCorr++)
+    {
+
+        fvScalarMatrix alpha1Eqn
+        (
+            // (
+            //     LTS_
+            //     ? fv::localEulerDdtScheme<scalar>(mesh).fvmDdt(alpha1_)
+            //     : fv::EulerDdtScheme<scalar>(mesh).fvmDdt(alpha1_)
+            // )
+            fv::EulerDdtScheme<scalar>(mesh).fvmDdt(alpha1_)
+            + fvm::div(phi_,alpha1_,alphaScheme)
+
+            ==
+            Su + fvm::Sp(Sp , alpha1_)
+        );
+
+
+        alpha1Eqn.solve();
+    }
+
+    Info<< "Phase-1 volume fraction = "
+        << alpha1_.weightedAverage(mesh.Vsc()).value()
+        << "  Min(" << alpha1_.name() << ") = " << min(alpha1_).value()
+        << "  Max(" << alpha1_.name() << ") = " << max(alpha1_).value()
+        << endl;
 }
 // ************************************************************************* //

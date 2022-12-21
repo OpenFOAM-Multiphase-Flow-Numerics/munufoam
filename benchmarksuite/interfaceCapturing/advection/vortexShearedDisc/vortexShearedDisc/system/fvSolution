@@ -20,20 +20,29 @@ solvers
 {
     "alpha.water.*"
     {
-        nAlphaCorr                  2;
+        nAlphaCorr                  1;
         nAlphaSubCycles             $SUBCYL;
         cAlpha                      1;
 
-        interfaceCapturingScheme             $ADVECTSCHEME;
-        interfaceRepresentation        $RECONSCHEME;
+        interfaceType               $MethodType;
+        interfaceCapturingScheme    $advectStrat;
+        interfaceRepresentation     $reconStrat;
 
 
-        vof2IsoTol          1e-8;
-        surfCellTol         1e-8;
-        writeVTK            false;
-        snapTol             0;
-        nAlphaBounds        10;
-        clip                false;
+        vof2IsoTol                  1e-8;
+        surfCellTol                 1e-8;
+        writeVTK                    false;
+        snapTol                     0;
+        nAlphaBounds                10;
+        clip                        false;
+
+        MULESCorr       yes;
+        nLimiterIter    5;
+
+        solver                      PBiCGStab;
+        preconditioner              DILU;
+        tolerance                   1e-8;
+        relTol                      0.0;
     }
 
 

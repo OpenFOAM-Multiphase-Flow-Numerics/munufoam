@@ -37,7 +37,8 @@ namespace Foam
 
 Foam::testRecon::testRecon
 (
-    const fvMesh& mesh
+    const fvMesh& mesh,
+    const dictionary& dict
 )
 {
 

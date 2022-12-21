@@ -35,7 +35,6 @@ SourceFiles
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "surfaceBase.H"
-#include "interfaceRepresentation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

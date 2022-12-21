@@ -55,7 +55,6 @@ SourceFiles
 
 #include "autoPtr.H"
 #include "dimensionedScalar.H"
-#include "interfaceRepresentation.H"
 #include "typeInfo.H"
 #include "volFields.H"
 
