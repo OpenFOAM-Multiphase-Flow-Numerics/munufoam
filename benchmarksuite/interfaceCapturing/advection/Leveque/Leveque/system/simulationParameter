@@ -20,7 +20,8 @@ ny 64;
 nz 64;
 
 SUBCYL       1;
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+MethodType      geometricVoF;
+advectStrat     implicitAdvection;
+reconStrat      standard;
 
 // ************************************************************************* //

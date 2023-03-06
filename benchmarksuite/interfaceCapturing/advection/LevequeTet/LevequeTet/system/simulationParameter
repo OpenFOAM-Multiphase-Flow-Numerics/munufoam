@@ -16,7 +16,10 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 SUBCYL       1;
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+MethodType      algebraicVoF;
+advectStrat     implicitAdvection;
+reconStrat      standard;
+
+
 
 // ************************************************************************* //

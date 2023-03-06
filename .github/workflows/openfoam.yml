@@ -29,6 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
         openfoam2206 -c "py.test  --writeNSteps=1 tutorials/"
+        openfoam2206 -c "py.test  --writeNSteps=1 benchmarksuite/"
         openfoam2206 -c "py.test -m 'not slow'"
         
     - name: upload logs

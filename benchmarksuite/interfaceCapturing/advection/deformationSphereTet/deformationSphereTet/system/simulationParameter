@@ -20,7 +20,8 @@ ny 32;
 nz 64;
 
 SUBCYL       1;
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+MethodType      algebraicVoF;
+advectStrat     implicitAdvection;
+reconStrat      standard;
 
 // ************************************************************************* //
