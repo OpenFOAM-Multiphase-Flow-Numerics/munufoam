@@ -55,6 +55,7 @@ public:
     TypeName("surfaceBase");
 
 
+
     // Constructors
 
         //- Construct from dictionary
@@ -71,15 +72,6 @@ public:
 
 
     // public member
-
-        //- Reference to the VoF Field
-        volScalarField& alpha1;
-
-        //- Reference to the face fluxes
-        const surfaceScalarField& phi;
-
-        //- Reference to the velocity field
-        const volVectorField& U;
 
         //- Is interface cell?
         boolList interfaceCell;

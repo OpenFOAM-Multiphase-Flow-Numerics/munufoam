@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 multiDimPolyFitter/multiDimPolyFunctions/paraboloid.C
 multiDimPolyFitter/leastSquareFitParabolid.C
 
@@ -20,9 +8,21 @@ newInterfaceCapturingMethod.C
 
 surfaceBase.C
 
+geometricVOF/cellCuts/cutCell/cutCell.C
+geometricVOF/cellCuts/cutCell/cutCellPLIC.C
+geometricVOF/cellCuts/cutCell/cutCellIso.C
+geometricVOF/cellCuts/cutCell/cutCellImpFunc.C
+geometricVOF/cellCuts/cutFace/cutFace.C
+geometricVOF/cellCuts/cutFace/cutFacePLIC.C
+geometricVOF/cellCuts/cutFace/cutFaceAdvect.C
+geometricVOF/cellCuts/cutFace/cutFaceIso.C
+geometricVOF/cellCuts/cutFace/cutFaceImpFunc.C
+geometricVOF/surfaceIterators/surfaceIteratorPLIC.C
+geometricVOF/surfaceIterators/surfaceIteratorIso.C
+
 geometricVOF/geometricVoFMethod.C
-geometricVOF/advectionStrategy/testAdvection.C
-geometricVOF/surfaceStrategy/testRecon.C
+geometricVOF/advectionStrategy/isoAdvection.C
+geometricVOF/surfaceStrategy/isoAlpha.C
 geometricVOF/geometricVoF.C
 
 geometricVOF/geometricVoFMethodModels.C

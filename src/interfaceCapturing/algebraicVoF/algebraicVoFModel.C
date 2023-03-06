@@ -37,7 +37,7 @@ Foam::algebraicVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::algebraicVoF
 )
 :
     algebraicVoFMethod(alpha1,phi,U),
-    oldSurface_(alpha1,phi,U),
+    oldSurface_(alpha1.oldTime(),phi,U),
     newSurface_(alpha1,phi,U),
     surfaceStrat_(alpha1.mesh(),alpha1.mesh().solverDict(alpha1.name())),
     advectionStrat_(alpha1,alphaPhi_,phi,U)

@@ -37,10 +37,11 @@ incompressibleTwoPhaseMixture mixture(U, phi);
 
 volScalarField& alpha1(mixture.alpha1());
 volScalarField& alpha2(mixture.alpha2());
+alpha1.oldTime();
 
 autoPtr<interfaceCapturingMethod> advector
 (
-    interfaceCapturing::New(alpha1,phi,U)
+    interfaceCapturingMethod::New(alpha1,phi,U)
 );
 
 
@@ -96,10 +97,7 @@ IOdictionary transportProperties
     )
 );
 
-
-
-surfaceForces surfForces(alpha1,phi,U,transportProperties);
-
+surfaceForces surfForces(advector.ref(),transportProperties);
 
 //#include "readGravitationalAcceleration.H"
 //#include "readhRef.H"

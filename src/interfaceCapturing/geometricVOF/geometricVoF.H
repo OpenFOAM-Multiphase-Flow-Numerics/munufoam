@@ -35,6 +35,7 @@ SourceFiles
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 #include "surfaceBase.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,15 +50,9 @@ class geometricVoF
 :
     public surfaceBase
 {
+    // private data members
 
-private:
-
-
-        // //- Disallow copy construct
-        // geometricVoF(const geometricVoF&);
-
-        // //- Disallow default bitwise assignment
-        // void operator=(const geometricVoF&);
+        const volScalarField& alpha_;
 
 public:
 
@@ -72,12 +67,25 @@ public:
         (
             volScalarField& alpha1,
             const surfaceScalarField& phi,
-            const volVectorField& U
+            const volVectorField& U,
+            timeState state
         );
 
 
     //- Destructor
     virtual ~geometricVoF() = default;
+
+    timeState state;
+
+    
+    const volScalarField& alpha()
+    {
+        if (state == timeState::oldState)
+        {
+            return alpha_.oldTime();
+        }
+        return alpha_;
+    }
 
     //- Interface area normals
     volVectorField normal;

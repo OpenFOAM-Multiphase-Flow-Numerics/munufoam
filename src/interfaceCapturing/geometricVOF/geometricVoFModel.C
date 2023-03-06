@@ -37,10 +37,10 @@ Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::geometricVoF
 )
 :
     geometricVoFMethod(alpha1,phi,U),
-    oldSurface_(alpha1,phi,U),
-    newSurface_(alpha1,phi,U),
+    oldSurface_(alpha1,phi,U,timeState::oldState),
+    newSurface_(alpha1,phi,U,timeState::newState),
     surfaceStrat_(alpha1.mesh(),alpha1.mesh().solverDict(alpha1.name())),
-    advectionStrat_(alpha1,alphaPhi_,phi,U)
+    advectionStrat_(*this)
 {
 
 }
@@ -56,7 +56,7 @@ void Foam::geometricVoFModel<Surface,SurfaceStrategy,AdvectionStrategy>::advect
     const volScalarField::Internal& Su
 )
 {
-    advectionStrat_.advect(newSurface_,oldSurface_,Sp,Su);
+    advectionStrat_.advect(Sp, Su);
 };
 
 

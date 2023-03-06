@@ -27,23 +27,27 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::testAdvection
+    Foam::isoAlpha
 
 Description
    
 
 SourceFiles
-    testAdvection.C
+    isoAlpha.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef testAdvection_H
-#define testAdvection_H
+#ifndef testRecon_H
+#define testRecon_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "geometricVoF.H"
 #include "interfaceCapturingMethod.H"
+#include "volFields.H"
+
+#include "surfaceIteratorIso.H"
+#include "volPointInterpolation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,56 +55,62 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class testAdvection Declaration
+                        Class isoAlpha Declaration
 \*---------------------------------------------------------------------------*/
 
-class testAdvection
+class isoAlpha
 {
-private:
+    // Private Data
 
-    //- Reference to the VoF Field
-    volScalarField& alpha1_;
+        //- Reference to mesh
+        const fvMesh& mesh_;
 
-    //- Reference to the face fluxes
-    surfaceScalarField& alphaPhi_;
+        //- VOF field interpolated to mesh points
+        scalarField ap_;
 
-    //- Reference to the face fluxes
-    const surfaceScalarField& phi_;
+        // Switches and tolerances. Tolerances need to go into toleranceSwitches
 
-    //- Reference to the velocity field
-    const volVectorField& U_;
+        //- Tolerance for search of isoFace giving specified VOF value
+        scalar isoFaceTol_;
 
+        //- Tolerance for marking of surface cells:
+        //  Those with surfCellTol_ < alpha1 < 1 - surfCellTol_
+        scalar surfCellTol_;
+
+        //- surfaceIterator finds the isovalue for specified VOF value
+        surfaceIteratorIso sIterIso_;
+
+
+    // Private Member Functions
+
+        //- No copy construct
+        isoAlpha(const isoAlpha&) = delete;
+
+        //- No copy assignment
+        void operator=(const isoAlpha&) = delete;
 
 public:
 
     //- Runtime type information
-    TypeName("testAdvection");
+    TypeName("isoAlpha");
 
     //- Constructors
 
         //- Construct given alpha, phi and velocity field. Note: phi should be
         // divergence free up to a sufficient tolerance
-        testAdvection
+        isoAlpha
         (
-            volScalarField& alpha1,
-            surfaceScalarField& alphaPhi,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            const fvMesh& mesh,
+            const dictionary& dict
         );
 
-
     //- Destructor
-    virtual ~testAdvection() = default;
+    virtual ~isoAlpha() = default;
 
+    void reconstruct(geometricVoF& surf);
 
+    void update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state);
 
-    void advect
-    (
-        geometricVoF& geoVoFNew,
-        geometricVoF& geoVoFOld,
-        const volScalarField::Internal& Sp,
-        const volScalarField::Internal& Su
-    );
 
 };
 

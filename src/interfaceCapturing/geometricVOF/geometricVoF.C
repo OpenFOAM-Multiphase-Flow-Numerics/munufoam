@@ -38,15 +38,18 @@ Foam::geometricVoF::geometricVoF
 (
     volScalarField& alpha1,
     const surfaceScalarField& phi,
-    const volVectorField& U
+    const volVectorField& U,
+    timeState state
 )
 :
     surfaceBase(alpha1,phi,U),
+    state(state),
+    alpha_(alpha1),
     normal
     (
         IOobject
         (
-            IOobject::groupName("interfaceNormal", alpha1.group()),
+            IOobject::groupName("interfaceNormal", state == timeState::oldState ? word(alpha1.group() + "_old") : word(alpha1.group() + "_new")),
             alpha1.mesh().time().timeName(),
             alpha1.mesh(),
             IOobject::NO_READ,
@@ -59,7 +62,7 @@ Foam::geometricVoF::geometricVoF
     (
         IOobject
         (
-            IOobject::groupName("interfaceCentre", alpha1.group()),
+            IOobject::groupName("interfaceCentre", state == timeState::oldState ? word(alpha1.group() + "_old") : word(alpha1.group() + "_new")),
             alpha1.mesh().time().timeName(),
             alpha1.mesh(),
             IOobject::NO_READ,
@@ -69,7 +72,7 @@ Foam::geometricVoF::geometricVoF
         dimensionedVector(dimLength, Zero)
     )
 {
-
+    
 }
 
 

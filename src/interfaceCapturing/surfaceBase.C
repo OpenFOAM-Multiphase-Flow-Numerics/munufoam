@@ -41,9 +41,6 @@ Foam::surfaceBase::surfaceBase
     const volVectorField& U
 )
 :
-    alpha1(alpha1),
-    phi(phi),
-    U(U),
     interfaceCell(alpha1.mesh().nCells(), false),
     interfaceLabels(0.2*alpha1.mesh().nCells()),
     timeIndexAndIter(0, 0)

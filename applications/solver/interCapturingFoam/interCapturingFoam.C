@@ -78,44 +78,44 @@ int main(int argc, char *argv[])
         {
             if (pimple.firstIter() || moveMeshOuterCorrectors)
             {
-                advector->surf().reconstruct();
+                // advector->surf().reconstruct();
 
                 mesh.update();
 
-                if (mesh.changing())
-                {
-                    // gets recompute by surfaces forces
-                    // gh = (g & mesh.C()) - ghRef;
-                    // ghf = (g & mesh.Cf()) - ghRef;
-                    advector->surf().mapAlphaField();
-                    alpha2 = 1.0 - alpha1;
-                    alpha2.correctBoundaryConditions();
-                    rho == alpha1*rho1 + alpha2*rho2;
-                    rho.correctBoundaryConditions();
-                    rho.oldTime() = rho;
-                    alpha2.oldTime() = alpha2;
+                // if (mesh.changing())
+                // {
+                //     // gets recompute by surfaces forces
+                //     // gh = (g & mesh.C()) - ghRef;
+                //     // ghf = (g & mesh.Cf()) - ghRef;
+                //     advector->surf().mapAlphaField();
+                //     alpha2 = 1.0 - alpha1;
+                //     alpha2.correctBoundaryConditions();
+                //     rho == alpha1*rho1 + alpha2*rho2;
+                //     rho.correctBoundaryConditions();
+                //     rho.oldTime() = rho;
+                //     alpha2.oldTime() = alpha2;
 
-                    MRF.update();
+                //     MRF.update();
 
-                    if (correctPhi)
-                    {
-                        // Calculate absolute flux
-                        // from the mapped surface velocity
-                        phi = mesh.Sf() & Uf();
+                //     if (correctPhi)
+                //     {
+                //         // Calculate absolute flux
+                //         // from the mapped surface velocity
+                //         phi = mesh.Sf() & Uf();
 
-                        #include "correctPhi.H"
+                //         #include "correctPhi.H"
 
-                        // Make the flux relative to the mesh motion
-                        fvc::makeRelative(phi, U);
+                //         // Make the flux relative to the mesh motion
+                //         fvc::makeRelative(phi, U);
 
-                        mixture.correct();
-                    }
+                //         mixture.correct();
+                //     }
 
-                    if (checkMeshCourantNo)
-                    {
-                        #include "meshCourantNo.H"
-                    }
-                }
+                //     if (checkMeshCourantNo)
+                //     {
+                //         #include "meshCourantNo.H"
+                //     }
+                // }
             }
 
             if(overwrite)

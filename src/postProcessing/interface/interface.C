@@ -21,7 +21,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "interface.H"
-#include "interfaceRepresentation.H"
 #include "interfaceCapturing.H"
 #include "cutCellPLIC.H"
 

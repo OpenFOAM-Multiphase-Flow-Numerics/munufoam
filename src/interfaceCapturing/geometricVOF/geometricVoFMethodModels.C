@@ -29,9 +29,9 @@ License
 #include "geometricVoF.H"
 #include "geometricVoFMethod.H"
 
-#include "testAdvection.H"
+#include "isoAdvection.H"
 
-#include "testRecon.H"
+#include "isoAlpha.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -40,8 +40,8 @@ makeGeometricVoFMethodTypes
 (
     geometricVoFMethod,
     geometricVoF,
-    testRecon,
-    testAdvection
+    isoAlpha,
+    isoAdvection
 );
 
 

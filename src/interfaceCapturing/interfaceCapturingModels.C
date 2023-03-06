@@ -28,9 +28,9 @@ License
 #include "makeInterfaceCapturingMethodTypes.H"
 #include "geometricVoF.H"
 
-#include "testAdvection.H"
+#include "isoAdvection.H"
 
-#include "testRecon.H"
+#include "isoAlpha.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -38,8 +38,8 @@ License
 makeInterfaceCapturingMethodTypes
 (
     geometricVoF,
-    testRecon,
-    testAdvection
+    isoAlpha,
+    isoAdvection
 );
 
 

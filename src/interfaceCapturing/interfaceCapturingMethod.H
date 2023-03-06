@@ -192,31 +192,42 @@ public:
         //- Reconstruct interface
         virtual const surfaceBase& surface(timeState state) = 0;
 
-        // template < class Type >
-        // tmp<surfaceScalarField> getRhoPhi
-        // (
-        //     const Type rho1,
-        //     const Type rho2
-        // ) const
-        // {
-        //     return tmp<surfaceScalarField>
-        //     (
-        //         new surfaceScalarField
-        //         (
-        //             "rhoPhi",
-        //             (rho1 - rho2)*alphaPhi_ + rho2*phi_
-        //         )
-        //     );
-        // }
+        template < class Type >
+        tmp<surfaceScalarField> getRhoPhi
+        (
+            const Type rho1,
+            const Type rho2
+        ) const
+        {
+            return tmp<surfaceScalarField>
+            (
+                new surfaceScalarField
+                (
+                    "rhoPhi",
+                    (rho1 - rho2)*alphaPhi_ + rho2*phi_
+                )
+            );
+        }
         
-        // const surfaceScalarField& alphaPhi() const
-        // {
-        //     return alphaPhi_;
-        // }
+        surfaceScalarField& alphaPhi()
+        {
+            return alphaPhi_;
+        }
 
-        // virtual const interfaceRepresentation& surf() const  = override;
+        const volVectorField& U() const
+        {
+            return U_;
+        }
 
-        // virtual interfaceRepresentation& surf() = override;
+        const surfaceScalarField& phi() const
+        {
+            return phi_;
+        }
+
+        volScalarField& alpha1()
+        {
+            return alpha1_;
+        }
 
 };
 

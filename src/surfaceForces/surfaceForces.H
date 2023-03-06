@@ -40,6 +40,7 @@ SourceFiles
 #include "IOdictionary.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+#include "interfaceCapturingMethod.H"
 
 #include "surfaceTensionModel.H"
 #include "surfaceTensionForceModel.H"
@@ -70,6 +71,9 @@ private:
         const fvMesh& mesh_;
 
 
+        interfaceCapturingMethod& ICM_;
+
+
         autoPtr<surfaceTensionForceModel> surfTenForceModel_;
 
         autoPtr<accelerationModel> accModel_;
@@ -91,9 +95,7 @@ public:
         //- Construct from dictionary
         surfaceForces
         (
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U,
+            interfaceCapturingMethod& ICM,
             const dictionary& dict
         );
 
@@ -141,12 +143,8 @@ public:
             return surfTenForceModel_->sigma();
         }
 
-        const surfaceScalarField& nHatf() const
-        {
-            return surfTenForceModel_->nHatf();
-        }
 
-        tmp<surfaceScalarField> surfaceTensionForce();
+        const surfaceScalarField& surfaceTensionForce() const;
 
         tmp<surfaceScalarField> accelerationForce();
 

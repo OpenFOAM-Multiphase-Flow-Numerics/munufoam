@@ -43,9 +43,7 @@ Foam::geometricVoFMethod::geometricVoFMethod
   interfaceCapturingMethod(alpha1,phi,U)
 {
 
-
 }
-
 
 
 Foam::autoPtr<Foam::geometricVoFMethod>

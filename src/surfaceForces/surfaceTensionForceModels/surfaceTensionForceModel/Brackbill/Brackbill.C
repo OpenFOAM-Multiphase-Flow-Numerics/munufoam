@@ -32,23 +32,18 @@ template<class interfaceCapturing>
 Foam::Brackbill<interfaceCapturing>::Brackbill
 (
     const dictionary& dict,
-    const volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U
+    interfaceCapturingMethod& ICM
 )
 :
     surfaceTensionForceModel
     (
-        typeName,
         dict,
-        alpha1,
-        phi,
-        U
+        ICM
     ),
     deltaN_
     (
         "deltaN",
-        1e-8/pow(average(alpha1.mesh().V()), 1.0/3.0)
+        1e-8/pow(average(alpha1_.mesh().V()), 1.0/3.0)
     )
 {
 
@@ -123,29 +118,30 @@ void Foam::Brackbill<interfaceCapturing>::correctContactAngle
 template<class interfaceCapturing>
 void Foam::Brackbill<interfaceCapturing>::correct()
 {
-    deltaFunctionModel_->correct();
+    // deltaFunctionModel_->correct();
 
-    const fvMesh& mesh = alpha1_.mesh();
-    const surfaceVectorField& Sf = mesh.Sf();
+    // const fvMesh& mesh = alpha1_.mesh();
+    // const surfaceVectorField& Sf = mesh.Sf();
 
-    // Cell gradient of alpha
-    const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
+    // // Cell gradient of alpha
+    // const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
 
-    // Interpolated face-gradient of alpha
-    surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
+    // // Interpolated face-gradient of alpha
+    // surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
 
-    // Face unit interface normal
-    surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
+    // // Face unit interface normal
+    // surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
 
-    correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryFieldRef());
+    // correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryFieldRef());
 
-    // Face unit interface normal flux
-    nHatf_ = nHatfv & Sf;
+    // // Face unit interface normal flux
+    // nHatf_ = nHatfv & Sf;
 
-    // Simple expression for curvature
-    K_ = -fvc::div(nHatf_);
+    // // Simple expression for curvature
+    // K_ = -fvc::div(nHatf_);
 
-    Kf_ = fvc::interpolate(K_);
+    // Kf_ = fvc::interpolate(K_);
+    surfaceTensionForce_;
 }
 
 

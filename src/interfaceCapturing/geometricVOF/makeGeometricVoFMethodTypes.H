@@ -48,28 +48,28 @@ License
                 SurfaceStrategy,                                            \
                 AdvectionStrategy                                           \
             >                                                               \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy;              \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy;        \
                                                                             \
         defineTemplateTypeNameAndDebug                                      \
         (                                                                   \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy,        \
             0                                                               \
         );                                                                  \
                                                                             \
         addNamedToRunTimeSelectionTable                                     \
         (                                                                   \
             ICM,                                                            \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy,        \
             dictionary,                                                     \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy               \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy         \
         );                                                                  \
                                                                             \
         addNamedToRunTimeSelectionTable                                     \
         (                                                                   \
             interfaceCapturingMethod,                                       \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy,              \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy,        \
             dictionary,                                                     \
-            Surface##_##SurfaceStrategy##_##AdvectionStrategy               \
+            Surface##Method_##SurfaceStrategy##_##AdvectionStrategy         \
         );                                                                  \
     }
 

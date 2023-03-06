@@ -136,7 +136,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::limitFluxes
     DebugInfo << "isoAdvection: Before conservative bounding: min(alpha) = "
         << minAlpha << ", max(alpha) = 1 + " << maxAlphaMinus1 << endl;
 
-    surfaceScalarField afcorrectionValues("afcorrectionValues", alphaPhi_*0.0);
+    surfaceScalarField afcorrectionValues("afcorrectionValues", alphaPhi1_*0.0);
 
     bitSet needBounding(mesh_.nCells(),false);
     needBounding.set(surfCells_);
@@ -181,13 +181,13 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::limitFluxes
 
                     // Change to treat boundaries consistently
                     scalar corralphaf =
-                        faceValue(alphaPhi_, facei)
+                        faceValue(alphaPhi1_, facei)
                       + faceValue(afcorrectionValues, facei);
 
-                    setFaceValue(alphaPhi_, facei, corralphaf);
+                    setFaceValue(alphaPhi1_, facei, corralphaf);
                 }
             }
-            syncProcPatches(alphaPhi_, phi_);
+            syncProcPatches(alphaPhi1_, phi_);
         }
         else
         {
@@ -200,7 +200,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::limitFluxes
         if (debug)
         {
             // Check if still unbounded
-            //scalarField alphaNew(alpha1In_ - fvc::surfaceIntegrate(alphaPhi_)());
+            //scalarField alphaNew(alpha1In_ - fvc::surfaceIntegrate(alphaPhi1_)());
             label maxAlphaMinus1 = max(alpha1_.primitiveField() - 1);
             scalar minAlpha = min(alpha1_.primitiveField());
             label nUndershoots = sum(neg0(alpha1_.primitiveField() + aTol));
@@ -290,7 +290,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::boundFlux
                     const scalar phif = faceValue(phi_, facei);
 
                     const scalar dVff =
-                        faceValue(alphaPhi_, facei)*dt
+                        faceValue(alphaPhi1_, facei)*dt
                       + faceValue(afcorrectionValues, facei)*dt;
 
                     const scalar maxExtraFaceFluidTrans =
@@ -357,7 +357,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::boundFlux
                 scalar alpha1New =
                 (
                     alphaOld[celli]*rDt  + Su[celli]
-                  - netFlux(alphaPhi_, celli)/Vi
+                  - netFlux(alphaPhi1_, celli)/Vi
                   - netFlux(afcorrectionValues, celli)/Vi
                 )
                 /
@@ -413,7 +413,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::timeIntegratedFlux
     // Get time step
 
     // Create object for interpolating velocity to isoface centres
-    interpolationCellPoint<vector> UInterp(U_);
+    interpolationCellPoint<vector> UInterp(geoVoF_.U());
 
     // For each downwind face of each surface cell we "isoadvect" to find dVf
     label nSurfaceCells = 0;
@@ -425,7 +425,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::timeIntegratedFlux
     // Get necessary references
     const scalarField& phiIn = phi_.primitiveField();
     const scalarField& magSfIn = mesh_.magSf().primitiveField();
-    scalarField& alphaPhiIn = alphaPhi_.primitiveFieldRef();
+    scalarField& alphaPhiIn = alphaPhi1_.primitiveFieldRef();
 
     // Get necessary mesh data
     const cellList& cellFaces = mesh_.cells();
@@ -527,7 +527,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::timeIntegratedFlux
     const polyBoundaryMesh& boundaryMesh = mesh_.boundaryMesh();
     const surfaceScalarField::Boundary& phib = phi_.boundaryField();
     const surfaceScalarField::Boundary& magSfb = mesh_.magSf().boundaryField();
-    surfaceScalarField::Boundary& alphaPhib = alphaPhi_.boundaryFieldRef();
+    surfaceScalarField::Boundary& alphaPhib = alphaPhi1_.boundaryFieldRef();
     const label nInternalFaces = mesh_.nInternalFaces();
 
     // Loop through boundary surface faces
@@ -568,7 +568,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::timeIntegratedFlux
     }
 
     // Synchronize processor patches
-    syncProcPatches(alphaPhi_, phi_);
+    syncProcPatches(alphaPhi1_, phi_);
 
     DebugInfo << "Number of isoAdvector surface cells = "
         << returnReduce(nSurfaceCells, sumOp<label>()) << endl;
@@ -606,7 +606,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::advect
 
     // Initialising alphaPhi with upwind values
     // i.e. phi[facei]*alpha1[upwindCell[facei]]
-    alphaPhi_ = upwind<scalar>(mesh_, phi_).flux(alpha1_);
+    alphaPhi1_ = upwind<scalar>(mesh_, phi_).flux(alpha1_);
 
 
     // Do the isoAdvection on surface cells
@@ -623,7 +623,7 @@ void Foam::advection::isoAdvection<interfaceRepresentation>::advect
     (
         alpha1_.oldTime().primitiveField()*rDeltaT
       + Su.field()
-      - fvc::surfaceIntegrate(alphaPhi_)().primitiveField()
+      - fvc::surfaceIntegrate(alphaPhi1_)().primitiveField()
     )/(rDeltaT - Sp.field());
 
     alpha1_.correctBoundaryConditions();
