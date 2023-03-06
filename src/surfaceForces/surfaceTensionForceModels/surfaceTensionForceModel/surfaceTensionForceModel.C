@@ -33,61 +33,27 @@ namespace Foam
  
 Foam::surfaceTensionForceModel::surfaceTensionForceModel
 (
-    const word& type,
     const dictionary& dict,
-    const volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U
+    interfaceCapturingMethod& ICM
 )
 :
-    alpha1_(alpha1),
-    phi_(phi),
-    U_(U),
+    alpha1_(ICM.alpha1()),
+    phi_(ICM.phi()),
+    U_(ICM.U()),
     surfTenModel_(nullptr),
-    deltaFunctionModel_(nullptr),
-    nHatf_
+    surfaceTensionForce_
     (
         IOobject
         (
-            "nHatf_",
+            "surfaceTensionForce__",
             alpha1_.time().timeName(),
             alpha1_.mesh()
         ),
         alpha1_.mesh(),
-        dimensionedScalar("nHatf", dimArea, 0.0)
-    ),
-    K_
-    (
-        IOobject
-        (
-            "K_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("K", dimless/dimLength, 0.0),
-        "zeroGradient"
-    ),
-    Kf_
-    (
-        IOobject
-        (
-            "Kf_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh()
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("Kf", dimless/dimLength, 0.0)
+        dimensionedScalar("surfaceTensionForce_", dimless/dimLength, 0.0)
     )
-
 {
-
-    surfTenModel_ = surfaceTensionModel::New(dict,alpha1.mesh());
-    word deltaFunctionType =
-        dict.lookupOrDefault<word>("deltaFunctionModel","alphaCSF");
-    deltaFunctionModel_ = deltaFunctionModel::New(deltaFunctionType,dict,alpha1);
+    surfTenModel_ = surfaceTensionModel::New(dict,alpha1_.mesh());
 }
 
 

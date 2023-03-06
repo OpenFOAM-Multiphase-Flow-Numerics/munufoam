@@ -19,8 +19,9 @@ nx	20;
 ny	1;
 nz	60;
 
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  plicRDF;
+MethodType      algebraicVoF;
+advectStrat     implicitAdvection;
+reconStrat      standard;
 SURFTENMODEL Brackbill;
 MAXCFL       0.1;
 

@@ -27,12 +27,11 @@ License
 
 #include "makeSurfaceTensionForceModelTypes.H"
 
-#include "isoAdvection.H"
-#include "MULESScheme.H"
-#include "plicRDF.H"
-#include "isoAlpha.H"
-#include "gradAlpha.H"
-#include "isoSurface.H"
+#include "interfaceCapturingMethod.H"
+
+#include "geometricVoFMethod.H"
+#include "algebraicVoFMethod.H"
+
 
 #include "Brackbill.H"
 
@@ -41,33 +40,10 @@ License
 
 makeSurfaceTensionForceModelTypes
 (
-    isoAdvection,
-    isoAlpha,
+    interfaceCapturingMethod, // works with all interfaceCapturingMethod
     Brackbill
 );
 
-makeSurfaceTensionForceModelTypes
-(
-    isoAdvection,
-    gradAlpha,
-    Brackbill
-);
-
-
-makeSurfaceTensionForceModelTypes
-(
-    isoAdvection,
-    plicRDF,
-    Brackbill
-);
-
-
-makeSurfaceTensionForceModelTypes
-(
-    MULESScheme,
-    isoSurface,
-    Brackbill
-);
 
 
 

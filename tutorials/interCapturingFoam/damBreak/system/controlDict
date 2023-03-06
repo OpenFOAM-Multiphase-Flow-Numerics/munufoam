@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v2112                                 |
+|  \\    /   O peration     | Version:  v2206                                 |
 |   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,13 +10,14 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
+    location    "system";
     object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 application     interCapturingFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
@@ -46,15 +47,12 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           1;
+maxCo           10;
 
-maxAlphaCo      1;
+maxAlphaCo      0.5;
 
 maxDeltaT       1;
 
 maxCapillaryNum 1e8;
-
-#sinclude   "sampling"
-
 
 // ************************************************************************* //

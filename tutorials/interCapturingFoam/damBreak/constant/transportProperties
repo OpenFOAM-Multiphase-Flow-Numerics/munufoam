@@ -30,10 +30,12 @@ air
     rho             1;
 }
 
+sigma               0.07;
+
 surfaceForces
 {
   sigma 0.0;
-  surfaceTensionForceModel Brackbill;
+  surfaceTensionForceModel Brackbilla;
   accelerationModel gravity;
   deltaFunctionModel alphaCSF;
 }

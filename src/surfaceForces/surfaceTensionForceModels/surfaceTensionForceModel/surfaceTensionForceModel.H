@@ -43,6 +43,7 @@ SourceFiles
 #include "surfaceTensionModel.H"
 #include "deltaFunctionModel.H"
 #include "fvc.H"
+#include "interfaceCapturingMethod.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,17 +69,9 @@ protected:
         const volVectorField& U_;
 
         autoPtr<surfaceTensionModel> surfTenModel_;
-
-        autoPtr<deltaFunctionModel> deltaFunctionModel_;
-
-        //- surface face normal on the face
-        surfaceScalarField nHatf_;
-
-        //- curvature field
-        volScalarField K_;
-
-        //- curvature field on faces
-        surfaceScalarField Kf_;
+        
+        //- surfaceTensionForce field
+        surfaceScalarField surfaceTensionForce_;
 
 private:
 
@@ -111,11 +104,9 @@ public:
             dictionary,
             (
                 const dictionary& dict,
-                const volScalarField& alpha1,
-                const surfaceScalarField& phi,
-                const volVectorField& U
+                interfaceCapturingMethod& ICM
             ),
-            (dict,alpha1,phi,U)
+            (dict,ICM)
         );
 
     // Selectors
@@ -124,9 +115,7 @@ public:
         static autoPtr<surfaceTensionForceModel> New
         (
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            interfaceCapturingMethod& ICM
         );
 
     // Constructors
@@ -134,11 +123,8 @@ public:
         //- Construct from dictionary
         surfaceTensionForceModel
         (
-            const word& type,
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            interfaceCapturingMethod& ICM
         );
 
     //- Destructor
@@ -148,32 +134,16 @@ public:
     // Member Functions
 
 
-        const volScalarField& K() const
-        {
-            return K_;
-        }
-
-        const surfaceScalarField& Kf() const
-        {
-            return Kf_;
-        }
-
-        const surfaceScalarField& nHatf() const
-        {
-            return nHatf_;
-        }
+        virtual void correct() = 0;
 
         tmp<volScalarField> sigma() const
         {
             return surfTenModel_->sigma();
         }
 
-        virtual void correct() = 0;
-
-        virtual tmp<surfaceScalarField> surfaceTensionForce()
+        virtual const surfaceScalarField& surfaceTensionForce() const
         {
-            return fvc::interpolate(sigma())*Kf()
-                   * deltaFunctionModel_->deltaFunction();
+            return surfaceTensionForce_;
         }
 };
 

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "simulationparameter": "c",
+        "fvschemes": "cpp"
+    }
+}

@@ -23,12 +23,17 @@ ddtSchemes
 gradSchemes
 {
     default         pointCellsLeastSquares;
+    // nHat faceLimited pointCellsLeastSquares 1;
+    // grad(alpha.water) faceLimited pointCellsLeastSquares 1;
 }
 
 divSchemes
 {
-    div(phi,alpha)  Gauss vanLeer;
-    div(phirb,alpha) Gauss linear;
+    // div(phi,alpha)  Gauss vanLeer;
+    div(phi,alpha)  Gauss upwind;
+    // div(phi,alpha)  Gauss CICSAM 0.5;
+    // div(phi,alpha)  Gauss HRIC;
+    div(phirb,alpha) Gauss vanLeer01;
 }
 
 laplacianSchemes

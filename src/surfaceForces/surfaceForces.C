@@ -27,20 +27,19 @@ License
 
 Foam::surfaceForces::surfaceForces
 (
-    const volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
+    interfaceCapturingMethod& ICM,
     const dictionary& dict
 )
 :
     surfaceForcesCoeffs_(dict.subDict("surfaceForces")),
-    alpha1_(alpha1),
-    mesh_(alpha1.mesh()),
+    alpha1_(ICM.alpha1()),
+    mesh_(alpha1_.mesh()),
+    ICM_(ICM),
     surfTenForceModel_(nullptr),
     accModel_(nullptr)
 {
-    surfTenForceModel_ = surfaceTensionForceModel::New(surfaceForcesCoeffs_,alpha1,phi,U);
-    accModel_ = accelerationModel::New(surfaceForcesCoeffs_,alpha1.mesh());
+    surfTenForceModel_ = surfaceTensionForceModel::New(surfaceForcesCoeffs_,ICM_);
+    // accModel_ = accelerationModel::New(surfaceForcesCoeffs_,alpha1.mesh());
 }
 
 
@@ -48,7 +47,7 @@ Foam::surfaceForces::surfaceForces
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 
-Foam::tmp<Foam::surfaceScalarField> Foam::surfaceForces::surfaceTensionForce()
+const Foam::surfaceScalarField& Foam::surfaceForces::surfaceTensionForce() const
 {
     return surfTenForceModel_->surfaceTensionForce();
 }

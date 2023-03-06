@@ -15,7 +15,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-interfaceCapturingMethod asd;
-interfaceRepresentation  asd;
+IFType                    geometricVoFMethod;
+interfaceCapturingMethod  isoAdvection; //geometricVoF_testRecon_isoAdvection
+interfaceRepresentation   isoAlpha;
 
 // ************************************************************************* //

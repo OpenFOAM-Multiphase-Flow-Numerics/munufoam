@@ -1,26 +1,42 @@
-cellCuts/cutCell/cutCell.C
-cellCuts/cutCell/cutCellPLIC.C
-cellCuts/cutCell/cutCellIso.C
-cellCuts/cutCell/cutCellImpFunc.C
-cellCuts/cutFace/cutFace.C
-cellCuts/cutFace/cutFacePLIC.C
-cellCuts/cutFace/cutFaceAdvect.C
-cellCuts/cutFace/cutFaceIso.C
-cellCuts/cutFace/cutFaceImpFunc.C
-surfaceIterators/surfaceIteratorPLIC.C
-surfaceIterators/surfaceIteratorIso.C
-
 multiDimPolyFitter/multiDimPolyFunctions/paraboloid.C
 multiDimPolyFitter/leastSquareFitParabolid.C
 
-reconstructedDistanceFunction/reconstructedDistanceFunction.C
 markInterfaceRegion/markInterfaceRegion.C
 
-/* Run-time selectable interfaceCapturing */
-interfaceCapturing/newInterfaceCapturing.C
-interfaceCapturing/interfaceCapturing.C
-interfaceCapturing/interfaceRepresentations/interfaceRepresentation.C
+interfaceCapturingMethod.C
+newInterfaceCapturingMethod.C
 
-interfaceCapturing/interfaceCapturingMethods.C
+surfaceBase.C
+
+geometricVOF/cellCuts/cutCell/cutCell.C
+geometricVOF/cellCuts/cutCell/cutCellPLIC.C
+geometricVOF/cellCuts/cutCell/cutCellIso.C
+geometricVOF/cellCuts/cutCell/cutCellImpFunc.C
+geometricVOF/cellCuts/cutFace/cutFace.C
+geometricVOF/cellCuts/cutFace/cutFacePLIC.C
+geometricVOF/cellCuts/cutFace/cutFaceAdvect.C
+geometricVOF/cellCuts/cutFace/cutFaceIso.C
+geometricVOF/cellCuts/cutFace/cutFaceImpFunc.C
+geometricVOF/surfaceIterators/surfaceIteratorPLIC.C
+geometricVOF/surfaceIterators/surfaceIteratorIso.C
+
+geometricVOF/geometricVoFMethod.C
+geometricVOF/advectionStrategy/isoAdvection.C
+geometricVOF/surfaceStrategy/isoAlpha.C
+geometricVOF/geometricVoF.C
+
+geometricVOF/geometricVoFMethodModels.C
+
+algebraicVoF/algebraicVoFMethod.C
+algebraicVoF/advectionStrategy/implicitAdvection.C
+algebraicVoF/advectionStrategy/MULESMethod.C
+algebraicVoF/surfaceStrategy/standard.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/CICSAM/CICSAM.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/HRIC/HRIC.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/mHRIC/mHRIC.C
+algebraicVoF/surfaceStrategy/interpolationSchemes/vofCompression/vofCompression.C
+algebraicVoF/algebraicVoF.C
+
+algebraicVoF/algebraicVoFMethodModels.C
 
 LIB = $(FOAM_USER_LIBBIN)/libinterfaceCapturing

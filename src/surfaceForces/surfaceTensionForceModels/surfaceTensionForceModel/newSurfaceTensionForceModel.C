@@ -18,7 +18,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceTensionForceModel.H"
-#include "interfaceCapturing.H"
+#include "interfaceCapturingMethod.H"
+#include "geometricVoFMethod.H"
+#include "stringOps.H"
 
 
 
@@ -29,41 +31,50 @@ Foam::autoPtr<Foam::surfaceTensionForceModel>
 Foam::surfaceTensionForceModel::New
 (
     const dictionary& dict,
-    const volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U
+    interfaceCapturingMethod& ICM
 )
 {
 
     word surfaceTensionForceModelTypeName
     (
-        dict.getCompat<word>
-        (
-            "surfaceTensionForceModel",
-            {{"curvatureModel", 1.1}}
-        )
+        dict.get<word>("surfaceTensionForceModel")
     );
 
     Info<< "Selecting surfaceTension model "
         << surfaceTensionForceModelTypeName << endl;
 
  
-    Info << "dictionaryConstructorTablePtr_ toc "  << dictionaryConstructorTablePtr_->sortedToc() << endl;
+    // allowing to correctly specify the type without looking up the interfaceCapturingMethod
+    auto ctorPtr = dictionaryConstructorTable(surfaceTensionForceModelTypeName);
 
-    auto* ctorPtr = dictionaryConstructorTable(surfaceTensionForceModelTypeName);
-
-    const interfaceCapturing& interfaceCapturingMethod =
-        alpha1.mesh().lookupObject<interfaceCapturing>(interfaceCapturing::typeName);
+    // // get the typeName of the interfaceCapturingMethod
+    // const interfaceCapturingMethod& ICM =
+    //     alpha1.mesh().lookupObject<interfaceCapturingMethod>(interfaceCapturingMethod::typeName);
 
     if (!ctorPtr)
     {
-        word combinedType = interfaceCapturingMethod.type() + "_" + surfaceTensionForceModelTypeName;
+        // concrete type failed this interfaceCapturingMethod ICM with surfaceTensionForceModel
+        word combinedType = ICM.type() + "_" + surfaceTensionForceModelTypeName;
         ctorPtr = dictionaryConstructorTable(combinedType);
     }
 
     if (!ctorPtr)
     {
-        
+        // check ICM category with surfaceTensionForceModel
+        const word ICMCategory = stringOps::split<word>(ICM.type(), '_').str(0);
+        word combinedType = ICMCategory + "_" + surfaceTensionForceModelTypeName;
+        ctorPtr = dictionaryConstructorTable(combinedType);
+    }
+
+    if (!ctorPtr)
+    {
+        // check with base class interfaceCapturingMethod with surfaceTensionForceModel
+        word combinedType = "interfaceCapturingMethod_" + surfaceTensionForceModelTypeName;
+        ctorPtr = dictionaryConstructorTable(combinedType);
+    }
+
+    if (!ctorPtr)
+    {
         FatalErrorInLookup
         (
             "surfaceTensionForceModel",
@@ -90,9 +101,7 @@ Foam::surfaceTensionForceModel::New
         ctorPtr
         (
             dict,
-            alpha1,
-            phi,
-            U
+            ICM
         )
     );
 

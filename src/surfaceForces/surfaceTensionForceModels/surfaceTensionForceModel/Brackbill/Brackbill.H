@@ -87,9 +87,7 @@ public:
         Brackbill
         (
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            interfaceCapturingMethod& ICM
         );
 
 

@@ -38,7 +38,7 @@ Author
 #include "fvCFD.H"
 //#include "isoAdvection.H"
 #include "dynamicFvMesh.H"
-#include "interfaceCapturing.H"
+#include "interfaceCapturingMethod.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
 #include "markInterfaceRegion.H"
 #include "setFlow.H"

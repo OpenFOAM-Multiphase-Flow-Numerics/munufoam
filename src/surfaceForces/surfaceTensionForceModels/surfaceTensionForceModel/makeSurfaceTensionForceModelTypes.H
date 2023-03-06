@@ -29,39 +29,29 @@ License
 #define makeInterfaceCapturingMethodTypes_H
 
 #include "addToRunTimeSelectionTable.H"
-#include "interfaceCapturing.H"
-#include "interfaceCapturingMethod.H"
 #include "dictionary.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#define makeSurfaceTensionForceModelTypes(advectType, IFType,surfTenType)       \
+#define makeSurfaceTensionForceModelTypes(IFType,surfTenType)                   \
                                                                                 \
     namespace Foam                                                              \
     {                                                                           \
-        typedef Foam::advection::advectType                                     \
-        <                                                                       \
-                Foam::interface::IFType                                         \
-        >  advectType##_##IFType;                                               \
-        typedef Foam::surfTenType                                               \
-            <                                                                   \
-                advectType##_##IFType                                           \
-            >                                                                   \
-            advectType##_##IFType##_##surfTenType;                              \
+        typedef Foam::surfTenType<IFType> IFType##_##surfTenType;               \
                                                                                 \
         defineTemplateTypeNameAndDebug                                          \
         (                                                                       \
-            advectType##_##IFType##_##surfTenType,                              \
+            IFType##_##surfTenType,                                             \
             0                                                                   \
         );                                                                      \
                                                                                 \
         addNamedToRunTimeSelectionTable                                         \
         (                                                                       \
             surfaceTensionForceModel,                                           \
-            advectType##_##IFType##_##surfTenType,                              \
+            IFType##_##surfTenType,                                             \
             dictionary,                                                         \
-            advectType##_##IFType##_##surfTenType                               \
+            IFType##_##surfTenType                                              \
         );                                                                      \
     }
 
