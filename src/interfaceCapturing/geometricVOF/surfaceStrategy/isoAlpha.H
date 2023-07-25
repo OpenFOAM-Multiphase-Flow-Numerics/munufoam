@@ -37,8 +37,8 @@ SourceFiles
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef testRecon_H
-#define testRecon_H
+#ifndef isoAlpha_H
+#define isoAlpha_H
 
 #include "typeInfo.H"
 #include "volFields.H"
