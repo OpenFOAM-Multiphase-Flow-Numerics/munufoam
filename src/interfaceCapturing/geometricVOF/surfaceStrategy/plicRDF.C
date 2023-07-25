@@ -37,41 +37,41 @@ License
 
 namespace Foam
 {
-namespace interface
-{
+
     defineTypeNameAndDebug(plicRDF, 0);
-}
+
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::interface::plicRDF::interpolateNormal()
+void Foam::plicRDF::interpolateNormal(const geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     scalar dt = mesh_.time().deltaTValue();
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
+    const volScalarField& alpha = surf.alpha();
 
     leastSquareGrad<scalar> lsGrad("polyDegree1",mesh_.geometricD());
 
-    exchangeFields.setUpCommforZone(interfaceCell_,false);
+    exchangeFields.setUpCommforZone(surf.interfaceCell,false);
 
     Map<vector> mapCentre
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, centre_)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, surf.centre)
     );
     Map<vector> mapNormal
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, normal_)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, surf.normal)
     );
 
     Map<vector> mapCC
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, mesh_.C())
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, mesh_.C())
     );
     Map<scalar> mapAlpha
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, alpha1_)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, alpha)
     );
 
     DynamicField<vector > cellCentre(100);
@@ -81,9 +81,9 @@ void Foam::interface::plicRDF::interpolateNormal()
 
     const labelListList& stencil = exchangeFields.getStencil();
 
-    forAll(interfaceLabels_, i)
+    forAll(surf.interfaceLabels, i)
     {
-        const label celli = interfaceLabels_[i];
+        const label celli = surf.interfaceLabels[i];
         vector estimatedNormal = vector::zero;
         scalar weight = 0;
         foundNormals.clear();
@@ -91,13 +91,13 @@ void Foam::interface::plicRDF::interpolateNormal()
         {
             const label& gblIdx = stencil[celli][i];
             vector n =
-                exchangeFields.getValue(normal_, mapNormal, gblIdx);
+                exchangeFields.getValue(surf.normal, mapNormal, gblIdx);
             point p = mesh_.C()[celli]-U_[celli]*dt;
             if (mag(n) != 0)
             {
                 n /= mag(n);
                 vector centre =
-                    exchangeFields.getValue(centre_, mapCentre, gblIdx);
+                    exchangeFields.getValue(surf.centre, mapCentre, gblIdx);
                 vector distanceToIntSeg = (tensor::I- n*n) & (p - centre);
                 estimatedNormal += n /max(mag(distanceToIntSeg), SMALL);
                 weight += 1/max(mag(distanceToIntSeg), SMALL);
@@ -150,7 +150,7 @@ void Foam::interface::plicRDF::interpolateNormal()
                 );
                 alphaValues.append
                 (
-                    exchangeFields.getValue(alpha1_, mapAlpha, gblIdx)
+                    exchangeFields.getValue(alpha, mapAlpha, gblIdx)
                 );
             }
             cellCentre -= mesh_.C()[celli];
@@ -160,21 +160,21 @@ void Foam::interface::plicRDF::interpolateNormal()
     }
 }
 
-void Foam::interface::plicRDF::gradSurf(const volScalarField& phi)
+void Foam::plicRDF::gradSurf(const volScalarField& phi,const geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     leastSquareGrad<scalar> lsGrad("polyDegree1", mesh_.geometricD());
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
-    exchangeFields.setUpCommforZone(interfaceCell_, false);
+    exchangeFields.setUpCommforZone(surf.interfaceCell, false);
 
     Map<vector> mapCC
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, mesh_.C())
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, mesh_.C())
     );
     Map<scalar> mapPhi
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, phi)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, phi)
     );
 
     DynamicField<vector> cellCentre(100);
@@ -182,9 +182,9 @@ void Foam::interface::plicRDF::gradSurf(const volScalarField& phi)
 
     const labelListList& stencil = exchangeFields.getStencil();
 
-    forAll(interfaceLabels_, i)
+    forAll(surf.interfaceLabels, i)
     {
-        const label celli = interfaceLabels_[i];
+        const label celli = surf.interfaceLabels[i];
 
         cellCentre.clear();
         phiValues.clear();
@@ -207,58 +207,60 @@ void Foam::interface::plicRDF::gradSurf(const volScalarField& phi)
 }
 
 
-void Foam::interface::plicRDF::setInitNormals(bool interpolate)
+void Foam::plicRDF::setInitNormals(bool interpolate,geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
-    interfaceLabels_.clear();
 
-    forAll(alpha1_, celli)
+    const volScalarField& alpha = surf.alpha();
+
+    forAll(alpha, celli)
     {
-        if (sIterPLIC_.isASurfaceCell(alpha1_[celli]))
+        if (sIterPLIC_.isASurfaceCell(alpha[celli]))
         {
-            interfaceCell_[celli] = true; // is set to false earlier
-            interfaceLabels_.append(celli);
+            surf.interfaceCell[celli] = true; // is set to false earlier
+            surf.interfaceLabels.append(celli);
         }
     }
-    interfaceNormal_.setSize(interfaceLabels_.size());
+    interfaceNormal_.setSize(surf.interfaceLabels.size());
 
-    RDF_.markCellsNearSurf(interfaceCell_, 1);
-    const boolList& nextToInterface_ = RDF_.nextToInterface();
-    exchangeFields.updateStencil(nextToInterface_);
+    RDF_.markCellsNearSurf(surf.interfaceCell, 1);
+    const boolList& nextToInterface = RDF_.nextToInterface();
+    exchangeFields.updateStencil(nextToInterface);
 
     if (interpolate)
     {
-        interpolateNormal();
+        interpolateNormal(surf);
     }
     else
     {
-        gradSurf(alpha1_);
+        gradSurf(alpha,surf);
     }
 }
 
 
-void Foam::interface::plicRDF::calcResidual
+void Foam::plicRDF::calcResidual
 (
-    List<normalRes>& normalResidual
+    List<normalRes>& normalResidual,
+    const geometricVoF& surf
 )
 {
     addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
-    exchangeFields.setUpCommforZone(interfaceCell_,false);
+    exchangeFields.setUpCommforZone(surf.interfaceCell,false);
 
     Map<vector> mapNormal
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, normal_)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, surf.normal)
     );
 
     const labelListList& stencil = exchangeFields.getStencil();
 
-    forAll(interfaceLabels_, i)
+    forAll(surf.interfaceLabels, i)
     {
-        const label celli = interfaceLabels_[i];
-        if (mag(normal_[celli]) == 0 || mag(interfaceNormal_[i]) == 0)
+        const label celli = surf.interfaceLabels[i];
+        if (mag(surf.normal[celli]) == 0 || mag(interfaceNormal_[i]) == 0)
         {
             normalResidual[i].celli = celli;
             normalResidual[i].normalResidual = 0;
@@ -269,12 +271,12 @@ void Foam::interface::plicRDF::calcResidual
         scalar avgDiffNormal = 0;
         scalar maxDiffNormal = GREAT;
         scalar weight= 0;
-        const vector cellNormal = normal_[celli]/mag(normal_[celli]);
+        const vector cellNormal = surf.normal[celli]/mag(surf.normal[celli]);
         forAll(stencil[celli],j)
         {
             const label gblIdx = stencil[celli][j];
             vector normal =
-                exchangeFields.getValue(normal_, mapNormal, gblIdx);
+                exchangeFields.getValue(surf.normal, mapNormal, gblIdx);
 
             if (mag(normal) != 0 && j != 0)
             {
@@ -307,7 +309,7 @@ void Foam::interface::plicRDF::calcResidual
     }
 }
 
-void Foam::interface::plicRDF::centreAndNormalBC()
+void Foam::plicRDF::centreAndNormalBC(geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     scalar convertToRad = Foam::constant::mathematical::pi/180.0;
@@ -315,14 +317,14 @@ void Foam::interface::plicRDF::centreAndNormalBC()
     // check if face is cut
     cutFacePLIC cutFace(mesh_);
 
-    const volScalarField::Boundary& abf = alpha1_.boundaryField();
-    volVectorField::Boundary& cbf = centre_.boundaryFieldRef();
-    volVectorField::Boundary& nbf = normal_.boundaryFieldRef();
+    const volScalarField::Boundary& abf = surf.alpha().boundaryField();
+    volVectorField::Boundary& cbf = surf.centre.boundaryFieldRef();
+    volVectorField::Boundary& nbf = surf.normal.boundaryFieldRef();
 
     const fvBoundaryMesh& boundary = mesh_.boundary();
 
     // we need a surfaceVectorField to compute theta
-    surfaceVectorField normalf(fvc::interpolate(normal_));
+    surfaceVectorField normalf(fvc::interpolate(surf.normal));
 
     forAll(boundary, patchi)
     {
@@ -331,7 +333,7 @@ void Foam::interface::plicRDF::centreAndNormalBC()
             forAll(normalf.boundaryFieldRef()[patchi],i)
             {
                 const label celli = boundary[patchi].faceCells()[i];
-                vector n = normal_[celli];
+                vector n = surf.normal[celli];
                 if(mag(n) != 0)
                 {
                     n /= mag(n);
@@ -370,7 +372,7 @@ void Foam::interface::plicRDF::centreAndNormalBC()
             {
                 const label celli = boundary[patchi].faceCells()[i];
                 const label faceI = boundary[patchi].start() + i;
-                vector n = normal_[celli];
+                vector n = surf.normal[celli];
                 if(mag(n) != 0)
                 {
                     n /= mag(n);
@@ -378,7 +380,7 @@ void Foam::interface::plicRDF::centreAndNormalBC()
                     (
                         faceI,
                         n,
-                        centre_[celli]
+                        surf.centre[celli]
                     );
 
                     if(cutStatus == 0)
@@ -394,8 +396,8 @@ void Foam::interface::plicRDF::centreAndNormalBC()
                         vector nTheta = sin(theta[i])*nf[i] - cos(theta[i])*projN;
                         vector nHat =  cos(theta[i])*nf[i] + sin(theta[i])*projN;
 
-                        cbf[patchi][i] = centre_[celli] + 2*nTheta/boundary[patchi].deltaCoeffs()[i]; // should point outside of the domain
-                        nbf[patchi][i] = nHat*mag(normal_[celli]);
+                        cbf[patchi][i] = surf.centre[celli] + 2*nTheta/boundary[patchi].deltaCoeffs()[i]; // should point outside of the domain
+                        nbf[patchi][i] = nHat*mag(surf.normal[celli]);
 
                     }
 
@@ -415,102 +417,71 @@ void Foam::interface::plicRDF::centreAndNormalBC()
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interface::plicRDF::plicRDF
+Foam::plicRDF::plicRDF
 (
-    volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
+    const fvMesh& mesh,
     const dictionary& dict
 )
 :
-    interfaceRepresentation
-    (
-        alpha1,
-        phi,
-        U,
-        dict
-    ),
-    mesh_(alpha1.mesh()),
+    mesh_(mesh),
 
     interfaceNormal_(0.2*mesh_.nCells()),
 
-    isoFaceTol_(modelDict().lookupOrDefault<scalar>("isoFaceTol", 1e-8)),
-    surfCellTol_(modelDict().lookupOrDefault<scalar>("surfCellTol", 1e-8)),
-    tol_(modelDict().lookupOrDefault("tol" , 1e-6)),
-    relTol_(modelDict().lookupOrDefault("relTol" , 0.1)),
-    iteration_(modelDict().lookupOrDefault("iterations" , 5)),
-    interpolateNormal_(modelDict().lookupOrDefault("interpolateNormal", true)),
-    RDF_(reconstructedDistanceFunction::New(alpha1.mesh())),
-    sIterPLIC_(mesh_,surfCellTol_)
+    isoFaceTol_(dict.getOrDefault<scalar>("isoFaceTol", 1e-8)),
+    surfCellTol_(dict.getOrDefault<scalar>("surfCellTol", 1e-8)),
+    tol_(dict.getOrDefault<scalar>("tol" , 1e-6)),
+    relTol_(dict.getOrDefault<scalar>("relTol" , 0.1)),
+    iteration_(dict.getOrDefault<label>("iterations" , 5)),
+    interpolateNormal_(dict.getOrDefault<bool>("interpolateNormal", true)),
+    RDF_(reconstructedDistanceFunction::New(mesh)),
+    sIterPLIC_(mesh_,surfCellTol_),
+    U_(mesh_.lookupObject<volVectorField>(dict.getOrDefault<word>("UName", "U")))
 {
-    setInitNormals(false);
 
-    centre_ = dimensionedVector("centre", dimLength, Zero);
-    normal_ = dimensionedVector("normal", dimArea, Zero);
-
-    forAll(interfaceLabels_, i)
-    {
-        const label celli = interfaceLabels_[i];
-        if (mag(interfaceNormal_[i]) == 0)
-        {
-            continue;
-        }
-        sIterPLIC_.vofCutCell
-        (
-            celli,
-            alpha1_[celli],
-            isoFaceTol_,
-            100,
-            interfaceNormal_[i]
-        );
-
-        if (sIterPLIC_.cellStatus() == 0)
-        {
-            normal_[celli] = sIterPLIC_.surfaceArea();
-            centre_[celli] = sIterPLIC_.surfaceCentre();
-            if (mag(normal_[celli]) == 0)
-            {
-                normal_[celli] = Zero;
-                centre_[celli] = Zero;
-            }
-        }
-        else
-        {
-            normal_[celli] = Zero;
-            centre_[celli] = Zero;
-        }
-    }
 }
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::interface::plicRDF::reconstruct(bool forceUpdate)
+
+void Foam::plicRDF::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state)
+{
+    addProfilingInFunction(geometricVoF);
+    if (state == timeState::oldState)
+    {
+        reconstruct(oldSurf);
+    }
+    else
+    {
+        reconstruct(newSurf);
+    }
+
+}
+
+
+void Foam::plicRDF::reconstruct(geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
-    const bool uptodate = alreadyReconstructed(forceUpdate);
 
-    if (uptodate && !forceUpdate)
-    {
-        return;
-    }
+    const volScalarField& alpha = surf.alpha();
 
     if (mesh_.topoChanging())
     {
         // Introduced resizing to cope with changing meshes
-        if (interfaceCell_.size() != mesh_.nCells())
+        if (surf.interfaceCell.size() != mesh_.nCells())
         {
-            interfaceCell_.resize(mesh_.nCells());
+            surf.interfaceCell.resize(mesh_.nCells());
         }
     }
-    interfaceCell_ = false;
+    surf.interfaceCell = false;
+    surf.interfaceLabels.clear();
 
-    // Sets interfaceCell_ and interfaceNormal
-    setInitNormals(interpolateNormal_);
+    // Sets surf.interfaceCell and interfaceNormal
+    setInitNormals(interpolateNormal_,surf);
 
-    centre_ = dimensionedVector("centre", dimLength, Zero);
-    normal_ = dimensionedVector("normal", dimArea, Zero);
+    surf.centre = dimensionedVector("centre", dimLength, Zero);
+    surf.normal = dimensionedVector("normal", dimArea, Zero);
 
     // nextToInterface is update on setInitNormals
     const boolList& nextToInterface_ = RDF_.nextToInterface();
@@ -519,9 +490,9 @@ void Foam::interface::plicRDF::reconstruct(bool forceUpdate)
 
     for (int iter=0; iter<iteration_; ++iter)
     {
-        forAll(interfaceLabels_, i)
+        forAll(surf.interfaceLabels, i)
         {
-            const label celli = interfaceLabels_[i];
+            const label celli = surf.interfaceLabels[i];
             if (mag(interfaceNormal_[i]) == 0 || tooCoarse.test(celli))
             {
                 continue;
@@ -529,7 +500,7 @@ void Foam::interface::plicRDF::reconstruct(bool forceUpdate)
             sIterPLIC_.vofCutCell
             (
                 celli,
-                alpha1_[celli],
+                alpha[celli],
                 isoFaceTol_,
                 100,
                 interfaceNormal_[i]
@@ -538,41 +509,41 @@ void Foam::interface::plicRDF::reconstruct(bool forceUpdate)
             if (sIterPLIC_.cellStatus() == 0)
             {
 
-                normal_[celli] = sIterPLIC_.surfaceArea();
-                centre_[celli] = sIterPLIC_.surfaceCentre();
-                if (mag(normal_[celli]) == 0)
+                surf.normal[celli] = sIterPLIC_.surfaceArea();
+                surf.centre[celli] = sIterPLIC_.surfaceCentre();
+                if (mag(surf.normal[celli]) == 0)
                 {
-                    normal_[celli] = Zero;
-                    centre_[celli] = Zero;
+                    surf.normal[celli] = Zero;
+                    surf.centre[celli] = Zero;
                 }
             }
             else
             {
-                normal_[celli] = Zero;
-                centre_[celli] = Zero;
+                surf.normal[celli] = Zero;
+                surf.centre[celli] = Zero;
             }
         }
 
-        normal_.correctBoundaryConditions();
-        centre_.correctBoundaryConditions();
-        List<normalRes> normalResidual(interfaceLabels_.size());
+        surf.normal.correctBoundaryConditions();
+        surf.centre.correctBoundaryConditions();
+        List<normalRes> normalResidual(surf.interfaceLabels.size());
 
         surfaceVectorField::Boundary nHatb(mesh_.Sf().boundaryField());
         nHatb *= 1/(mesh_.magSf().boundaryField());
 
         {
-            centreAndNormalBC();
+            centreAndNormalBC(surf);
             RDF_.constructRDF
             (
                 nextToInterface_,
-                centre_,
-                normal_,
+                surf.centre,
+                surf.normal,
                 exchangeFields,
                 false
             );
-            // RDF_.updateContactAngle(alpha1_, U_, nHatb);
-            gradSurf(RDF_);
-            calcResidual(normalResidual);
+            // RDF_.updateContactAngle(alpha, U_, nHatb);
+            gradSurf(RDF_,surf);
+            calcResidual(normalResidual,surf);
         }
 
         label resCounter = 0;
@@ -651,35 +622,6 @@ void Foam::interface::plicRDF::reconstruct(bool forceUpdate)
     }
 }
 
-
-void Foam::interface::plicRDF::mapAlphaField() const
-{
-    addProfilingInFunction(geometricVoF);
-    // without it we seem to get a race condition
-    mesh_.C();
-
-    cutCellPLIC cutCell(mesh_);
-
-    forAll(normal_, celli)
-    {
-        if (mag(normal_[celli]) != 0)
-        {
-            vector n = normal_[celli]/mag(normal_[celli]);
-            scalar cutValue = (centre_[celli] - mesh_.C()[celli]) & (n);
-            cutCell.calcSubCell
-            (
-                celli,
-                cutValue,
-                n
-            );
-            alpha1_[celli] = cutCell.VolumeOfFluid();
-
-        }
-    }
-    alpha1_.correctBoundaryConditions();
-    alpha1_.oldTime () = alpha1_;
-    alpha1_.oldTime().correctBoundaryConditions();
-}
 
 
 // ************************************************************************* //

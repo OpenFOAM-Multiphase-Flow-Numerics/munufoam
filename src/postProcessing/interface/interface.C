@@ -21,7 +21,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "interface.H"
-#include "interfaceCapturing.H"
+#include "geometricVoFMethod.H"
 #include "cutCellPLIC.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -47,41 +47,34 @@ Foam::interface::interface
     mesh_(mesh)
 {
 
-    interfaceCapturing& ICM = mesh_.lookupObjectRef<interfaceCapturing>(interfaceCapturing::typeName);
-    interfaceRepresentation& surf = ICM.surf();
-
-    surf.reconstruct(false);
+    geometricVoFMethod& geoVoFMethod = mesh_.lookupObjectRef<geometricVoFMethod>(interfaceCapturingMethod::typeName);
+    const geometricVoF& surf = geoVoFMethod.surface(timeState::newState);
 
     cutCellPLIC cellCut(mesh_);
 
-    const volVectorField& normal = surf.normal();
-    const volVectorField& centre = surf.centre();
-
-    const boolList& interfaceCells = surf.interfaceCell();
+    const volVectorField& normal = surf.normal;
+    const volVectorField& centre = surf.centre;
 
     DynamicList< List<point> > facePts;
     DynamicList< label > interfaceCellAdressing(0.1*mesh_.nCells());
 
-    forAll(interfaceCells,cellI)
+    forAll(surf.interfaceLabels,i)
     {
-        if(interfaceCells[cellI])
+        label cellI = surf.interfaceLabels[i];
+        if(mag(normal[cellI]) != 0)
         {
-            if(mag(normal[cellI]) != 0)
+            vector n = -normal[cellI]/mag(normal[cellI]);
+
+            scalar cutVal = (centre[cellI]-mesh_.C()[cellI]) & n;
+
+            cellCut.calcSubCell(cellI,cutVal,n);
+            const auto& fPoints = cellCut.facePoints();
+            if (fPoints.size() >= 3)
             {
-                vector n = -normal[cellI]/mag(normal[cellI]);
-
-                scalar cutVal = (centre[cellI]-mesh_.C()[cellI]) & n;
-
-                cellCut.calcSubCell(cellI,cutVal,n);
-                const auto& fPoints = cellCut.facePoints();
-                if (fPoints.size() >= 3)
-                {
-                    facePts.append(fPoints);
-                    interfaceCellAdressing.append(cellI);
-                }
+                facePts.append(fPoints);
+                interfaceCellAdressing.append(cellI);
             }
         }
-
     }
 
     meshCells_.setSize(interfaceCellAdressing.size());

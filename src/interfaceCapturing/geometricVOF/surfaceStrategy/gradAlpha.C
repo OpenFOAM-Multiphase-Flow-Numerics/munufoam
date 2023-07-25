@@ -28,37 +28,33 @@ License
 #include "gradAlpha.H"
 #include "fvc.H"
 #include "leastSquareGrad.H"
-#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace interface
-{
     defineTypeNameAndDebug(gradAlpha, 0);
-}
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::interface::gradAlpha::gradSurf(const volScalarField& phi)
+void Foam::gradAlpha::gradSurf(const volScalarField& phi, const geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     leastSquareGrad<scalar> lsGrad("polyDegree1",mesh_.geometricD());
 
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
-    exchangeFields.setUpCommforZone(interfaceCell_,true);
+    exchangeFields.setUpCommforZone(surf.interfaceCell,true);
 
     Map<vector> mapCC
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, mesh_.C())
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, mesh_.C())
     );
     Map<scalar> mapPhi
     (
-        exchangeFields.getDatafromOtherProc(interfaceCell_, phi)
+        exchangeFields.getDatafromOtherProc(surf.interfaceCell, phi)
     );
 
     DynamicField<vector> cellCentre(100);
@@ -66,9 +62,9 @@ void Foam::interface::gradAlpha::gradSurf(const volScalarField& phi)
 
     const labelListList& stencil = exchangeFields.getStencil();
 
-    forAll(interfaceLabels_, i)
+    forAll(surf.interfaceLabels, i)
     {
-        const label celli = interfaceLabels_[i];
+        const label celli = surf.interfaceLabels[i];
 
         cellCentre.clear();
         phiValues.clear();
@@ -93,72 +89,78 @@ void Foam::interface::gradAlpha::gradSurf(const volScalarField& phi)
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interface::gradAlpha::gradAlpha
+Foam::gradAlpha::gradAlpha
 (
-    volScalarField& alpha1,
-    const surfaceScalarField& phi,
-    const volVectorField& U,
+    const fvMesh& mesh,
     const dictionary& dict
 )
 :
-    interfaceRepresentation
-    (
-        alpha1,
-        phi,
-        U,
-        dict
-    ),
-    mesh_(alpha1.mesh()),
-    interfaceNormal_(fvc::grad(alpha1)),
-    isoFaceTol_(modelDict().lookupOrDefault<scalar>("isoFaceTol", 1e-8)),
-    surfCellTol_(modelDict().lookupOrDefault<scalar>("surfCellTol", 1e-8)),
+    mesh_(mesh),
+    interfaceNormal_(mesh.nCells()),
+    isoFaceTol_(dict.lookupOrDefault<scalar>("isoFaceTol", 1e-8)),
+    surfCellTol_(dict.lookupOrDefault<scalar>("surfCellTol", 1e-8)),
     sIterPLIC_(mesh_,surfCellTol_)
 {
-    reconstruct();
+    
 }
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::interface::gradAlpha::reconstruct(bool forceUpdate)
+void Foam::gradAlpha::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state)
 {
     addProfilingInFunction(geometricVoF);
-    const bool uptodate = alreadyReconstructed(forceUpdate);
-
-    if (uptodate && !forceUpdate)
+    if (state == timeState::oldState)
     {
-        return;
+        reconstruct(oldSurf);
     }
+    else
+    {
+        reconstruct(newSurf);
+    }
+
+}
+
+void Foam::gradAlpha::reconstruct(geometricVoF& surf)
+{
+    addProfilingInFunction(geometricVoF);
+    // const bool uptodate = alreadyReconstructed(forceUpdate);
+
+    // if (uptodate && !forceUpdate)
+    // {
+    //     return;
+    // }
+    const volScalarField& alpha = surf.alpha();
 
     if (mesh_.topoChanging())
     {
         // Introduced resizing to cope with changing meshes
-        if (interfaceCell_.size() != mesh_.nCells())
+        if (surf.interfaceCell.size() != mesh_.nCells())
         {
-            interfaceCell_.resize(mesh_.nCells());
+            surf.interfaceCell.resize(mesh_.nCells());
         }
     }
-    interfaceCell_ = false;
+    surf.interfaceCell = false;
 
-    interfaceLabels_.clear();
+    surf.interfaceLabels.clear();
 
-    forAll(alpha1_, celli)
+    forAll(alpha, celli)
     {
-        if (sIterPLIC_.isASurfaceCell(alpha1_[celli]))
+        if (sIterPLIC_.isASurfaceCell(alpha[celli]))
         {
-            interfaceCell_[celli] = true; // is set to false earlier
-            interfaceLabels_.append(celli);
+            surf.interfaceCell[celli] = true; // is set to false earlier
+            surf.interfaceLabels.append(celli);
         }
     }
-    interfaceNormal_.resize(interfaceLabels_.size());
-    centre_ = dimensionedVector("centre", dimLength, Zero);
-    normal_ = dimensionedVector("normal", dimArea, Zero);
+    interfaceNormal_.resize(surf.interfaceLabels.size());
+    surf.centre = dimensionedVector("centre", dimLength, Zero);
+    surf.normal  = dimensionedVector("normal", dimArea, Zero);
 
-    gradSurf(alpha1_);
+    gradSurf(alpha,surf);
 
-    forAll(interfaceLabels_, i)
+    forAll(surf.interfaceLabels, i)
     {
-        const label celli = interfaceLabels_[i];
+        const label celli = surf.interfaceLabels[i];
         if (mag(interfaceNormal_[i]) == 0)
         {
             continue;
@@ -167,7 +169,7 @@ void Foam::interface::gradAlpha::reconstruct(bool forceUpdate)
         sIterPLIC_.vofCutCell
         (
             celli,
-            alpha1_[celli],
+            alpha[celli],
             isoFaceTol_,
             100,
             interfaceNormal_[i]
@@ -175,51 +177,23 @@ void Foam::interface::gradAlpha::reconstruct(bool forceUpdate)
 
         if (sIterPLIC_.cellStatus() == 0)
         {
-            normal_[celli] = sIterPLIC_.surfaceArea();
-            centre_[celli] = sIterPLIC_.surfaceCentre();
-            if (mag(normal_[celli]) == 0)
+            surf.normal[celli] = sIterPLIC_.surfaceArea();
+            surf.centre[celli] = sIterPLIC_.surfaceCentre();
+            if (mag(surf.normal[celli]) == 0)
             {
-                normal_[celli] = Zero;
-                centre_[celli] = Zero;
+                surf.normal[celli] = Zero;
+                surf.centre[celli] = Zero;
             }
         }
         else
         {
-            normal_[celli] = Zero;
-            centre_[celli] = Zero;
+            surf.normal[celli] = Zero;
+            surf.centre[celli] = Zero;
         }
     }
 }
 
 
-void Foam::interface::gradAlpha::mapAlphaField() const
-{
-    addProfilingInFunction(geometricVoF);
-    // Without this line, we seem to get a race condition
-    mesh_.C();
-
-    cutCellPLIC cutCell(mesh_);
-
-    forAll(normal_, celli)
-    {
-        if (mag(normal_[celli]) != 0)
-        {
-            vector n = normal_[celli]/mag(normal_[celli]);
-            scalar cutValue = (centre_[celli] - mesh_.C()[celli]) & (n);
-            cutCell.calcSubCell
-            (
-                celli,
-                cutValue,
-                n
-            );
-            alpha1_[celli] = cutCell.VolumeOfFluid();
-        }
-    }
-
-    alpha1_.correctBoundaryConditions();
-    alpha1_.oldTime () = alpha1_;
-    alpha1_.oldTime().correctBoundaryConditions();
-}
 
 
 // ************************************************************************* //

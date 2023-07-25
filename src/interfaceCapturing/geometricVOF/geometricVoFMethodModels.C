@@ -32,6 +32,8 @@ License
 #include "isoAdvection.H"
 
 #include "isoAlpha.H"
+#include "gradAlpha.H"
+#include "plicRDF.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,6 +43,22 @@ makeGeometricVoFMethodTypes
     geometricVoFMethod,
     geometricVoF,
     isoAlpha,
+    isoAdvection
+);
+
+makeGeometricVoFMethodTypes
+(
+    geometricVoFMethod,
+    geometricVoF,
+    gradAlpha,
+    isoAdvection
+);
+
+makeGeometricVoFMethodTypes
+(
+    geometricVoFMethod,
+    geometricVoF,
+    plicRDF,
     isoAdvection
 );
 

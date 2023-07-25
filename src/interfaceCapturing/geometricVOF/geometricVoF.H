@@ -78,7 +78,7 @@ public:
     timeState state;
 
     
-    const volScalarField& alpha()
+    const volScalarField& alpha() const
     {
         if (state == timeState::oldState)
         {

@@ -56,6 +56,7 @@ SourceFiles
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "geometricVoF.H"
 #include "surfaceIteratorPLIC.H"
 #include "reconstructedDistanceFunction.H"
 #include "zoneDistribute.H"
@@ -64,16 +65,12 @@ SourceFiles
 
 namespace Foam
 {
-namespace interface
-{
 
 /*---------------------------------------------------------------------------*\
                            Class plicRDF Declaration
 \*---------------------------------------------------------------------------*/
 
 class plicRDF
-:
-    public interfaceRepresentation
 {
     // Private Data
 
@@ -120,27 +117,31 @@ class plicRDF
         //- surfaceIterator finds the plane centre for specified VOF value
         surfaceIteratorPLIC sIterPLIC_;
 
+        //- reference to velocity field
+        const volVectorField& U_;
+
 
     // Private Member Functions
 
         //- Set initial normals by interpolation from the previous
         //- timestep or with the Young method
-        void setInitNormals(bool interpolate);
+        void setInitNormals(bool interpolate,geometricVoF& surf);
 
         //- compute gradient at the surfaces
-        void gradSurf(const volScalarField& phi);
+        void gradSurf(const volScalarField& phi,const geometricVoF& surf);
 
         //- compute the normal residuals
         void calcResidual
         (
-            List<normalRes>& normalResidual
+            List<normalRes>& normalResidual,
+            const geometricVoF& surf
         );
 
         //- interpolation of the normals from the previous time step
-        void interpolateNormal();
+        void interpolateNormal(const geometricVoF& surf);
 
         //- update boundary points is case of a specified contact angle
-        void centreAndNormalBC();
+        void centreAndNormalBC(geometricVoF& surf);
 
 
         //- No copy construct
@@ -159,9 +160,7 @@ public:
     //- Construct from components
     plicRDF
     (
-        volScalarField& alpha1,
-        const surfaceScalarField& phi,
-        const volVectorField& U,
+        const fvMesh& mesh,
         const dictionary& dict
     );
 
@@ -172,23 +171,15 @@ public:
 
     // Member Functions
 
-        //- Reconstruct interface
-        virtual void reconstruct(bool forceUpdate = true);
+        void reconstruct(geometricVoF& surf);
 
-        //- Map VoF Field in case of refinement
-        virtual void mapAlphaField() const;
+        void update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state);
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace interface
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-#ifdef NoRepository
-#   include "plicRDF.C"
-#endif
 
 
 #endif

@@ -48,12 +48,11 @@ SourceFiles
 #include "autoPtr.H"
 #include "surfaceIteratorPLIC.H"
 #include "zoneDistribute.H"
+#include "geometricVoF.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
-{
-namespace interface
 {
 
 /*---------------------------------------------------------------------------*\
@@ -61,8 +60,6 @@ namespace interface
 \*---------------------------------------------------------------------------*/
 
 class gradAlpha
-:
-    public interfaceRepresentation
 {
     // Private Data
 
@@ -86,7 +83,7 @@ class gradAlpha
         surfaceIteratorPLIC sIterPLIC_;
 
         //- Compute gradient at the surfaces
-        void gradSurf(const volScalarField& phi);
+        void gradSurf(const volScalarField& phi,const geometricVoF& surf);
 
 
     // Private Member Functions
@@ -103,12 +100,10 @@ public:
     //- Runtime type information
     TypeName("gradAlpha");
 
-    //- Construct from components
+    //- Construct from mesh and dict
     gradAlpha
     (
-        volScalarField& alpha1,
-        const surfaceScalarField& phi,
-        const volVectorField& U,
+        const fvMesh& mesh,
         const dictionary& dict
     );
 
@@ -118,24 +113,16 @@ public:
 
     // Member Functions
 
-        //- Reconstruct interface
-        virtual void reconstruct(bool forceUpdate = true);
+    void reconstruct(geometricVoF& surf);
 
-        //- map VoF Field in case of refinement
-        virtual void mapAlphaField() const;
+    void update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state);
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace interface
 } // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-#   include "gradAlpha.C"
-#endif
 
 #endif
 

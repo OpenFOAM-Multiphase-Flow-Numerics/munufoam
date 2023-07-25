@@ -10,6 +10,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
+    location    "system";
     object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,6 +42,7 @@ solvers
         tolerance       1e-8;
         relTol          0;
     }
+
     "pcorr.*"
     {
         solver          PCG;

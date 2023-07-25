@@ -43,7 +43,6 @@ SourceFiles
 #include "typeInfo.H"
 #include "volFields.H"
 #include "geometricVoF.H"
-#include "interfaceCapturingMethod.H"
 #include "volFields.H"
 
 #include "surfaceIteratorIso.H"
@@ -96,8 +95,7 @@ public:
 
     //- Constructors
 
-        //- Construct given alpha, phi and velocity field. Note: phi should be
-        // divergence free up to a sufficient tolerance
+        //- Construct from mesh and dict
         isoAlpha
         (
             const fvMesh& mesh,
