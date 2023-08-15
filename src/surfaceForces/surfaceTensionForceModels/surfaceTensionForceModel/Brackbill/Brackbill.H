@@ -49,16 +49,19 @@ namespace Foam
                 Class Brackbill Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class interfaceCapturing>
 class Brackbill
     : public surfaceTensionForceModel
 {
 
 private:
 
-    //-
+        //-
+        const volScalarField& alpha1_;
+
         //- Stabilisation for normalisation of the interface normal
         const dimensionedScalar deltaN_;
+
+        volScalarField K_;
 
     // Private Member Functions
 
@@ -105,10 +108,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-#   include "Brackbill.C"
-#endif
 
 
 #endif

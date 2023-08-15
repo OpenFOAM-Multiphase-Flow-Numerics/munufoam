@@ -1,16 +1,20 @@
 surfaceForces.C
 
 surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModel.C
-surfaceTensionForceModels/surfaceTensionForceModel/newSurfaceTensionForceModel.C
-
 surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModels.C
 
-accelerationForce/accelerationModel.C
-accelerationForce/accelerationModels.C
-accelerationForce/gravity/gravity.C
+surfaceTensionForceModels/surfaceTensionForceModel/Brackbill/Brackbill.C
 
-deltaFunctions/deltaFunctionModel.C
-deltaFunctions/newDeltaFunctionModel.C
-deltaFunctions/alphaCSF/alphaCSF.C
+
+accelerationForce/accelerationForceMethod.C
+accelerationForce/accelerationForceMethods.C
+accelerationForce/gravity/gravity.C
+accelerationForce/staticGravity/staticGravity.C
+
+accelerationForce/geometricVoF/accelerationForceGeoVoFMethod.C
+accelerationForce/geometricVoF/gravityRecon/gravityRecon.C
+accelerationForce/geometricVoF/gravityRecon2/gravityRecon2.C
+accelerationForce/geometricVoF/staticGravityPLIC/staticGravityPLIC.C
+
 
 LIB = $(FOAM_USER_LIBBIN)/libsurfaceForces

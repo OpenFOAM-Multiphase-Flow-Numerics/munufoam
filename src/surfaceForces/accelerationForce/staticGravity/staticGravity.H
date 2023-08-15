@@ -16,121 +16,109 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::accelerationModel
+    Foam::staticGravity
 
 Description
-    abstract base class of the acceleration model
+    constant gravitional forces
 
 SourceFiles
-    accelerationModel.C
-    newAccelerationModel.C
+    staticGravity.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef accelerationModel_H
-#define accelerationModel_H
+#ifndef staticGravity_H
+#define staticGravity_H
 
 #include "typeInfo.H"
-#include "runTimeSelectionTables.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
-#include "Pair.H"
+#include "uniformDimensionedFields.H"
 
-#include "IOdictionary.H"
-#include "volFields.H"
-#include "surfaceFields.H"
-
+#include "accelerationForceMethod.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class accelerationModel Declaration
+                Class staticGravity Declaration
 \*---------------------------------------------------------------------------*/
 
-class accelerationModel
+class staticGravity
+    : public accelerationForceMethod
 {
-protected:
 
-        surfaceScalarField accf_; // ghf
-        volScalarField acc_; // gh
+        //- const access dict
+        const dictionary& staticGravityDict_;
 
-        //- Re-calculate the interface curvature
-        virtual void calculateAcc();
+        //- staticGravity vector
+        dimensionedVector g_;
 
-private:
+        //- Href Field
+        uniformDimensionedScalarField hRef_;
 
     // Private Member Functions
 
         //- Disallow copy construct
-        accelerationModel(const accelerationModel&);
+        staticGravity(const staticGravity&);
 
         //- Disallow default bitwise assignment
-        void operator=(const accelerationModel&);
+        void operator=(const staticGravity&);
+
+
+        protected:
+
+            //- Re-calculate the interface curvature
+            virtual void calculateAcc();
+
 
 public:
 
     //- Runtime type information
-    TypeName("accelerationModel");
+    TypeName("staticGravity");
 
-
-    // Declare run-time constructor selection table
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            accelerationModel,
-            dictionary,
-            (
-                const dictionary& dict,
-                const fvMesh& mesh
-            ),
-            (dict,mesh)
-        );
-
-    // Selectors
-
-        //- Return a reference to the selected phaseChange model
-        static autoPtr<accelerationModel> New
-        (
-            const dictionary& dict,
-            const fvMesh& mesh
-        );
 
     // Constructors
 
         //- Construct from dictionary
-        accelerationModel
+        staticGravity
         (
-            const word& type,
-            const dictionary& dict,
-            const fvMesh& mesh
+            interfaceCapturingMethod& ICM,
+            const dictionary& dict
         );
 
+
     //- Destructor
-    virtual ~accelerationModel()
+    virtual ~staticGravity()
     {}
 
-    // Member Functions
+    //- return the pressure field depending
+    virtual volScalarField& pressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh
+    );
 
-        const surfaceScalarField& accf() const
-        {
-            return accf_;
-        }
+    //- update static pressure field
+    virtual void updatePressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
 
-        const volScalarField& acc() const
-        {
-            return acc_;
-        }
+    //- update dynamic pressure field
+    virtual void updateRefPressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
 
-        void correct()
-        {
-            calculateAcc();
-        }
+    virtual tmp<surfaceScalarField> accelerationForce();
 
-        virtual tmp<surfaceScalarField> accelerationForce() = 0;
+
 };
 
 

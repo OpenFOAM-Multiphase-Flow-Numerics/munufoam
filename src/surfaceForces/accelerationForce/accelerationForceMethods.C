@@ -17,40 +17,49 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "deltaFunctionModel.H"
+#include "accelerationForceMethod.H"
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::deltaFunctionModel>
-Foam::deltaFunctionModel::New
+Foam::autoPtr<Foam::accelerationForceMethod>
+Foam::accelerationForceMethod::New
 (
-    word deltaFunctionModelTypeName,
-    const dictionary& dict,
-    const volScalarField& alpha1
+    interfaceCapturingMethod& ICM,
+    const dictionary& dict
 )
 {
 
-    Info<< "Selecting surfaceTension model "
-        << deltaFunctionModelTypeName << endl;
+    word accelerationModelTypeName
+    (
+        dict.lookup("accelerationForceModel")
+    );
 
-    auto* ctorPtr = dictionaryConstructorTable(deltaFunctionModelTypeName);
+    Info<< "Selecting accelerationForceModel "
+        << accelerationModelTypeName << endl;
+
+    auto* ctorPtr = dictionaryConstructorTable(accelerationModelTypeName);
 
     if (!ctorPtr)
     {
-        FatalErrorInLookup
+        accelerationForceMethod::registerModel::printCompatibilityTable
         (
-            "massSourceTermModel",
-            deltaFunctionModelTypeName,
-            *dictionaryConstructorTablePtr_
-        ) << exit(FatalError);
+            FatalIOError,
+            wordList
+            ({
+                "accelerationModel",
+                "interfaceCapturingMethod"
+            }),
+            *accelerationForceMethod::compatibilityTable_
+        ) << exit(FatalIOError);
     }
 
-    return autoPtr<deltaFunctionModel>
+    return autoPtr<accelerationForceMethod>
     (
         ctorPtr
         (
-            dict,
-            alpha1
+            ICM,
+            dict
         )
     );
 }

@@ -26,6 +26,7 @@ namespace Foam
 {
     defineTypeNameAndDebug(surfaceTensionForceModel, 0);
     defineRunTimeSelectionTable(surfaceTensionForceModel, dictionary);
+    std::unique_ptr<HashTable<word>> surfaceTensionForceModel::compatibilityTable_(new HashTable<word>());
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

@@ -17,51 +17,66 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "deltaFunctionModel.H"
-
+#include "accelerationForceGeoVoFMethod.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(deltaFunctionModel, 0);
-    defineRunTimeSelectionTable(deltaFunctionModel, dictionary);
+    defineTypeNameAndDebug(accelerationForceGeoVoFMethod, 0);
+    defineRunTimeSelectionTable(accelerationForceGeoVoFMethod, dictionary);
+}
+
+// * * * * * * * * * * * * * * Protected Access Member Functions   * * * * * //
+
+Foam::geometricVoFMethod& Foam::accelerationForceGeoVoFMethod::checkCompatiablity(interfaceCapturingMethod& geoVoF)
+{
+    try
+    {
+        geometricVoFMethod& ICMPtr = dynamic_cast<geometricVoFMethod&>(geoVoF);
+        return ICMPtr;
+    }
+    catch(std::bad_cast const&)
+    {
+
+        accelerationForceMethod::registerModel::printCompatibilityTable
+        (
+            FatalIOError,
+            wordList
+            ({
+                "accelerationModel",
+                "interfaceCapturingMethod"
+            }),
+            *accelerationForceMethod::compatibilityTable_
+        ) << exit(FatalIOError);
+    }
+
+    return dynamic_cast<geometricVoFMethod&>(geoVoF);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::deltaFunctionModel::deltaFunctionModel
+Foam::accelerationForceGeoVoFMethod::accelerationForceGeoVoFMethod
 (
-    const word type,
-    const dictionary& dict,
-    const volScalarField& alpha1
+    geometricVoFMethod& geoVoF,
+    const dictionary& dict
 )
 :
-    alpha1_(alpha1),
-    deltaFunction_
-    (
-        IOobject
-        (
-            "deltaFunction_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh()
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("deltaFunction_", dimless/dimLength, 0.0)
-    )
-
+  accelerationForceMethod(geoVoF,dict),
+  geoVoF_(geoVoF)
 {
 
 }
 
 
+// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::deltaFunctionModel::calculateDeltaFunction()
+void Foam::accelerationForceGeoVoFMethod::calculateAcc()
 {
-    notImplemented("void Foam::RDF::calculateDeltaFunction()");;
+    notImplemented("bool Foam::accelerationForceGeoVoFMethod::calculateAcc()");;
 }
+
 
 
 // ************************************************************************* //

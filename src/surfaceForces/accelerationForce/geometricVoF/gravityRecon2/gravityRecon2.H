@@ -1,33 +1,39 @@
 /*---------------------------------------------------------------------------*\
-            Copyright (c) 2017-2019, German Aerospace Center (DLR)
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of the VoFLibrary source code library, which is an
-	unofficial extension to OpenFOAM.
+    This file is part of OpenFOAM.
+
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
+
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
     for more details.
+
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::gravity
+    Foam::gravityRecon2
 
 Description
-    constant gravitional forces
 
 SourceFiles
-    gravity.C
+    gravityRecon2.C
+    newPhaseChangeModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef gravity_H
-#define gravity_H
+#ifndef gravityRecon2_H
+#define gravityRecon2_H
 
 #include "typeInfo.H"
 #include "volFields.H"
@@ -35,21 +41,27 @@ SourceFiles
 #include "autoPtr.H"
 #include "uniformDimensionedFields.H"
 
-#include "accelerationForceMethod.H"
+#include "zoneDistribute.H"
+#include "accelerationForceGeoVoFMethod.H"
+#include "markInterfaceRegion.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class gravity Declaration
+                Class gravityRecon2 Declaration
 \*---------------------------------------------------------------------------*/
 
-class gravity
-    : public accelerationForceMethod
+class gravityRecon2
+:
+    public accelerationForceGeoVoFMethod
 {
 
-        //- const access dict
+private:
+
+
         const dictionary& gravityDict_;
 
         //- gravity vector
@@ -61,40 +73,45 @@ class gravity
     // Private Member Functions
 
         //- Disallow copy construct
-        gravity(const gravity&);
+        gravityRecon2(const gravityRecon2&);
 
         //- Disallow default bitwise assignment
-        void operator=(const gravity&);
+        void operator=(const gravityRecon2&);
+
+        vector closestDist(const point p, const vector n ,const vector cenrte);
 
 
         protected:
 
-        //- Re-calculate the interface curvature
+        //- Re-calculate the acceleration
         virtual void calculateAcc();
-
 
 public:
 
     //- Runtime type information
-    TypeName("gravity");
+    TypeName("gravityRecon2");
 
 
     // Constructors
 
         //- Construct from dictionary
-        gravity
+        gravityRecon2
         (
-            interfaceCapturingMethod& ICM,
+            geometricVoFMethod& geoVoF,
             const dictionary& dict
         );
-        
 
+        gravityRecon2
+        (
+            interfaceCapturingMethod& geoVoF,
+            const dictionary& dict
+        );
 
     //- Destructor
-    virtual ~gravity()
+    virtual ~gravityRecon2()
     {}
 
-    //- return the pressure field depending
+        //- return the pressure field depending
     virtual volScalarField& pressure
     (
         volScalarField& p,
@@ -118,7 +135,6 @@ public:
     );
 
     virtual tmp<surfaceScalarField> accelerationForce();
-
 
 };
 

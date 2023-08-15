@@ -17,33 +17,37 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "gravity.H"
+#include "gravityRecon.H"
 #include "gravityMeshObject.H"
-#include "addToRunTimeSelectionTable.H"
 #include "fvc.H"
+
+#include "accelerationForceGeoVoFMethod.H"
+#include "geometricVoFMethod.H"
+#include "cutFacePLIC.H"
 #include "registerAccelerationModels.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    registerBaseAccelerationModel(gravity);
+    registerDerivedAccelerationModel(accelerationForceGeoVoFMethod,gravityRecon,geometricVoFMethod);
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::gravity::gravity
+Foam::gravityRecon::gravityRecon
 (
-    interfaceCapturingMethod& ICM,
+    geometricVoFMethod& geoVoF,
     const dictionary& dict
 )
 :
-    accelerationForceMethod
+    accelerationForceGeoVoFMethod
     (
-        ICM,
+        geoVoF,
         dict
     ),
-    gravityDict_(dict),
+    gravityReconDict_(dict),
     g_
     (
         "gravity",
@@ -55,8 +59,8 @@ Foam::gravity::gravity
         IOobject
         (
             "hRef",
-            acc_.mesh().time().constant(),
-            acc_.mesh(),
+            geoVoF.alpha1().mesh().time().constant(),
+            geoVoF.alpha1().mesh(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
@@ -67,9 +71,25 @@ Foam::gravity::gravity
 }
 
 
+Foam::gravityRecon::gravityRecon
+(
+    interfaceCapturingMethod& geoVoF,
+    const dictionary& dict
+)
+:
+    gravityRecon
+    (
+        checkCompatiablity(geoVoF),
+        dict
+    )
+{
+
+}
+
+
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
 
-void Foam::gravity::calculateAcc()
+void Foam::gravityRecon::calculateAcc()
 {
     // read only if mesh changed would be clever
     const fvMesh& mesh = acc_.mesh();
@@ -88,7 +108,7 @@ void Foam::gravity::calculateAcc()
 }
 
 
-Foam::volScalarField& Foam::gravity::pressure
+Foam::volScalarField& Foam::gravityRecon::pressure
 (
     volScalarField& p,
     volScalarField& p_rgh
@@ -98,7 +118,7 @@ Foam::volScalarField& Foam::gravity::pressure
 }
 
 
-void Foam::gravity::updatePressure
+void Foam::gravityRecon::updatePressure
 (
     volScalarField& p,
     volScalarField& p_rgh,
@@ -109,7 +129,7 @@ void Foam::gravity::updatePressure
 }
 
 
-void Foam::gravity::updateRefPressure
+void Foam::gravityRecon::updateRefPressure
 (
     volScalarField& p,
     volScalarField& p_rgh,
@@ -120,11 +140,57 @@ void Foam::gravity::updateRefPressure
 }
 
 
-Foam::tmp<Foam::surfaceScalarField> Foam::gravity::accelerationForce()
+Foam::tmp<Foam::surfaceScalarField> Foam::gravityRecon::accelerationForce()
 {
     const fvMesh& mesh = acc_.mesh();
+    const geometricVoF& surf = geoVoF_.surface(timeState::newState);
+    const boolList& interfaceCell = surf.interfaceCell;
+    const volVectorField& centre = surf.centre;
     const volScalarField& rho = mesh.lookupObject<volScalarField>("rho");
-    return -accf()*fvc::snGrad(rho);
+
+    accf_ = (g_ & mesh.Cf());
+
+    // Mark faces using any marked cell
+    bitSet markedFace(mesh.nFaces());
+
+    for (const label celli : surf.interfaceLabels)
+    {
+        markedFace.set(mesh.cells()[celli]);  // set multiple faces
+    }
+
+    // syncTools::syncFaceList(mesh, markedFace, orEqOp<unsigned int>());
+    cutFacePLIC cutFace(mesh);
+
+    const labelList& owner = mesh.faceOwner();
+    const labelList& neighbour = mesh.faceNeighbour();
+
+    forAll(accf_,faceI)
+    {
+        
+        if (markedFace.found(faceI))
+        {
+            bool ownSurf = interfaceCell[owner[faceI]];
+            bool neiSurf = interfaceCell[neighbour[faceI]];
+            vector faceCentre = Zero;
+            if (ownSurf)
+            {
+                faceCentre = centre[owner[faceI]];
+            }
+            if (neiSurf)
+            {
+                faceCentre = centre[neighbour[faceI]];
+            }
+
+            if (ownSurf & neiSurf)
+            {
+                faceCentre = 0.5*centre[owner[faceI]] + 0.5*centre[neighbour[faceI]];
+            }
+            accf_[faceI] = g_.value() & faceCentre;
+        }
+    }
+    
+    // return -accf_*fvc::snGrad(rho);
+    return -dimensionedScalar("rhoJump",dimDensity,999)*accf_*fvc::snGrad(surf.alpha());
 }
 
 // ************************************************************************* //

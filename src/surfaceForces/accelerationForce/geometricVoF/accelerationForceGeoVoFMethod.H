@@ -16,19 +16,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::surfaceForces
+    Foam::accelerationForceGeoVoFMethod
 
 Description
-    computes the forces accting at the interace e.g. surface tension and
-    gravity
+    abstract base class of the acceleration model
+    handles dynamic and static formulation of the gravity/acceleration source terms
 
 SourceFiles
-    surfaceForces.C
+    accelerationForceGeoVoFMethod.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef surfaceForces_H
-#define surfaceForces_H
+#ifndef accelerationForceGeoVoFMethod_H
+#define accelerationForceGeoVoFMethod_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
@@ -41,9 +41,7 @@ SourceFiles
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "interfaceCapturingMethod.H"
-
-#include "surfaceTensionModel.H"
-#include "surfaceTensionForceModel.H"
+#include "geometricVoFMethod.H"
 #include "accelerationForceMethod.H"
 
 
@@ -53,131 +51,119 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class surfaceForces Declaration
+                Class accelerationForceGeoVoFMethod Declaration
 \*---------------------------------------------------------------------------*/
 
-
-class surfaceForces
+class accelerationForceGeoVoFMethod
+:
+    public accelerationForceMethod
 {
+protected:
+
+    geometricVoFMethod& geoVoF_;
+
+
+    geometricVoFMethod& checkCompatiablity(interfaceCapturingMethod& geoVoF);
+
+
+    //- Re-calculate the acceleration
+    virtual void calculateAcc();
+
 private:
-
-    //-
-        dictionary surfaceForcesCoeffs_;
-
-        //- reference to volume fraction field
-        const volScalarField& alpha1_;
-
-        const fvMesh& mesh_;
-
-
-        interfaceCapturingMethod& ICM_;
-
-
-        autoPtr<surfaceTensionForceModel> surfTenForceModel_;
-
-        autoPtr<accelerationForceMethod> accModel_;
-
 
     // Private Member Functions
 
         //- Disallow copy construct
-        surfaceForces(const surfaceForces&);
+        accelerationForceGeoVoFMethod(const accelerationForceGeoVoFMethod&);
 
         //- Disallow default bitwise assignment
-        void operator=(const surfaceForces&);
+        void operator=(const accelerationForceGeoVoFMethod&);
 
 public:
 
+    //- Runtime type information
+    TypeName("accelerationForceGeoVoFMethod");
+
+
+    // Declare run-time constructor selection table
+
+        declareRunTimeSelectionTable
+        (
+            autoPtr,
+            accelerationForceGeoVoFMethod,
+            dictionary,
+            (
+                geometricVoFMethod& geoVoF,
+                const dictionary& dict
+            ),
+            (geoVoF,dict)
+        );
+
+    // Selectors
+
+        //- Return a reference to the selected phaseChange model
+        static autoPtr<accelerationForceGeoVoFMethod> New
+        (
+            geometricVoFMethod& geoVoF,
+            const dictionary& dict
+        );
 
     // Constructors
 
         //- Construct from dictionary
-        surfaceForces
+        accelerationForceGeoVoFMethod
         (
-            interfaceCapturingMethod& ICM,
+            geometricVoFMethod& geoVoF,
             const dictionary& dict
         );
 
-
     //- Destructor
-    virtual ~surfaceForces()
+    virtual ~accelerationForceGeoVoFMethod()
     {}
 
-
     // Member Functions
-        virtual scalar capillaryDt
-        (
-            const volScalarField& rho1,
-            const volScalarField& rho2
-        );
 
-        virtual scalar capillaryDt
-        (
-            const dimensionedScalar rho1,
-            const dimensionedScalar rho2
-        );
-
-        dictionary& modelDict();
-
-        const dictionary& modelDict() const;
-
-        void correct()
+        const surfaceScalarField& accf() const
         {
-            surfTenForceModel_->correct();
-            accModel_->correct();
+            return accf_;
         }
 
         const volScalarField& acc() const
         {
-            return accModel_->acc();
+            return acc_;
         }
 
-        const surfaceScalarField& accf() const
-        {
-            return accModel_->accf();
-        }
-
-        tmp<volScalarField> sigma() const
-        {
-            return surfTenForceModel_->sigma();
-        }
-
-
-        volScalarField& pressure
+        //- return the pressure field depending
+        virtual volScalarField& pressure
         (
             volScalarField& p,
             volScalarField& p_rgh
-        )
-        {
-            return accModel_->pressure(p,p_rgh);
-        }
+        ) = 0;
 
-        void updatePressure
+        //- update static pressure field
+        virtual void updatePressure
         (
             volScalarField& p,
             volScalarField& p_rgh,
             const volScalarField& rho
-        )
-        {
-            return accModel_->updatePressure(p,p_rgh,rho);
-        }
+        ) = 0;
 
-        void updateRefPressure
+        //- update dynamic pressure field
+        virtual void updateRefPressure
         (
             volScalarField& p,
             volScalarField& p_rgh,
             const volScalarField& rho
-        )
+        ) = 0;
+
+        //- update the acceleration fields
+        void correct()
         {
-            return accModel_->updateRefPressure(p,p_rgh,rho);
+            calculateAcc();
         }
 
-
-        const surfaceScalarField& surfaceTensionForce() const;
-
-        tmp<surfaceScalarField> accelerationForce();
-
-
+        //- return the accleration forces
+        virtual tmp<surfaceScalarField> accelerationForce() = 0;
 };
 
 

@@ -16,131 +16,114 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::deltaFunctionModel
+    Foam::staticGravityPLIC
 
 Description
+    constant gravitional forces
 
 SourceFiles
-    deltaFunctionModel.C
-    newDeltaFunctionModel.C
+    staticGravityPLIC.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef deltaFunctionModel_H
-#define deltaFunctionModel_H
+#ifndef staticGravityPLIC_H
+#define staticGravityPLIC_H
 
 #include "typeInfo.H"
-#include "runTimeSelectionTables.H"
-
+#include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "uniformDimensionedFields.H"
+#include "geometricVoFMethod.H"
 
-
-#include "IOdictionary.H"
-#include "volFields.H"
-#include "surfaceFields.H"
-
-#include "fvcSnGrad.H"
-
-
+#include "accelerationForceGeoVoFMethod.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class deltaFunctionModel Declaration
+                Class staticGravityPLIC Declaration
 \*---------------------------------------------------------------------------*/
 
-class deltaFunctionModel
+class staticGravityPLIC
+    : public accelerationForceGeoVoFMethod
 {
-protected:
 
-        // reference to volume fraction field
-        const volScalarField& alpha1_;
+        //- const access dict
+        const dictionary& staticGravityPLICDict_;
 
-        //- delta function on the faces
-        surfaceScalarField deltaFunction_;
+        //- staticGravityPLIC vector
+        dimensionedVector g_;
 
-private:
+        //- Href Field
+        uniformDimensionedScalarField hRef_;
 
     // Private Member Functions
 
         //- Disallow copy construct
-        deltaFunctionModel(const deltaFunctionModel&);
+        staticGravityPLIC(const staticGravityPLIC&);
 
         //- Disallow default bitwise assignment
-        void operator=(const deltaFunctionModel&);
+        void operator=(const staticGravityPLIC&);
 
-protected:
+
+        protected:
 
         //- Re-calculate the interface curvature
-        virtual void calculateDeltaFunction();
+        virtual void calculateAcc();
+
 
 public:
 
     //- Runtime type information
-    TypeName("deltaFunctionModel");
-
-
-    // Declare run-time constructor selection table
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            deltaFunctionModel,
-            dictionary,
-            (
-                const dictionary& dict,
-                const volScalarField& alpha1
-            ),
-            (dict,alpha1)
-        );
-
-
-    // Selectors
-
-        //- Return a reference to the selected phaseChange model
-        static autoPtr<deltaFunctionModel> New
-        (
-            const word deltaFunctionModelTypeName,
-            const dictionary& dict,
-            const volScalarField& alpha1
-        );
+    TypeName("staticGravityPLIC");
 
 
     // Constructors
 
-        //- Construct from dictionary
-        deltaFunctionModel
+        staticGravityPLIC
         (
-            const word type,
-            const dictionary& dict,
-            const volScalarField& alpha1
+            geometricVoFMethod& geoVoF,
+            const dictionary& dict
+        );
+
+        staticGravityPLIC
+        (
+            interfaceCapturingMethod& geoVoF,
+            const dictionary& dict
         );
 
 
     //- Destructor
-    virtual ~deltaFunctionModel()
+    virtual ~staticGravityPLIC()
     {}
 
+    //- return the pressure field depending
+    virtual volScalarField& pressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh
+    );
 
-    // Member Functions
+    //- update static pressure field
+    virtual void updatePressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
 
-        const surfaceScalarField& deltaFunction() const
-        {
-            return deltaFunction_;
-        }
+    //- update dynamic pressure field
+    virtual void updateRefPressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
 
-        tmp<surfaceScalarField> deltaFunction(const volScalarField& phi) const
-        {
-            return fvc::snGrad(phi);
-        }
+    virtual tmp<surfaceScalarField> accelerationForce();
 
-        void correct()
-        {
-            calculateDeltaFunction();
-        }
 
 };
 

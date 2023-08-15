@@ -26,10 +26,19 @@ License
 #include "fvcDiv.H"
 #include "fvcGrad.H"
 
+#include "registerSurfaceTensionModels.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    registerBaseSurfaceTensionModel(Brackbill);
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class interfaceCapturing>
-Foam::Brackbill<interfaceCapturing>::Brackbill
+
+Foam::Brackbill::Brackbill
 (
     const dictionary& dict,
     interfaceCapturingMethod& ICM
@@ -40,10 +49,24 @@ Foam::Brackbill<interfaceCapturing>::Brackbill
         dict,
         ICM
     ),
+    alpha1_(ICM.alpha1()),
     deltaN_
     (
         "deltaN",
         1e-8/pow(average(alpha1_.mesh().V()), 1.0/3.0)
+    ),
+    K_
+    (
+        IOobject
+        (
+            "K_",
+            alpha1_.mesh().time().timeName(),
+            alpha1_.mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        alpha1_.mesh(),
+        dimensionedScalar(dimless/dimLength, Zero)
     )
 {
 
@@ -52,8 +75,8 @@ Foam::Brackbill<interfaceCapturing>::Brackbill
 
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
 
-template<class interfaceCapturing>
-void Foam::Brackbill<interfaceCapturing>::correctContactAngle
+
+void Foam::Brackbill::correctContactAngle
 (
     surfaceVectorField::Boundary& nHatb,
     surfaceVectorField::Boundary& gradAlphaf
@@ -115,33 +138,31 @@ void Foam::Brackbill<interfaceCapturing>::correctContactAngle
 }
 
 
-template<class interfaceCapturing>
-void Foam::Brackbill<interfaceCapturing>::correct()
+
+void Foam::Brackbill::correct()
 {
-    // deltaFunctionModel_->correct();
 
-    // const fvMesh& mesh = alpha1_.mesh();
-    // const surfaceVectorField& Sf = mesh.Sf();
+    const fvMesh& mesh = alpha1_.mesh();
+    const surfaceVectorField& Sf = mesh.Sf();
 
-    // // Cell gradient of alpha
-    // const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
+    // Cell gradient of alpha
+    const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
 
-    // // Interpolated face-gradient of alpha
-    // surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
+    // Interpolated face-gradient of alpha
+    surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
 
-    // // Face unit interface normal
-    // surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
+    // Face unit interface normal
+    surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
 
-    // correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryFieldRef());
+    correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryFieldRef());
 
-    // // Face unit interface normal flux
-    // nHatf_ = nHatfv & Sf;
+    // Face unit interface normal flux
+    surfaceScalarField nHatf = nHatfv & Sf;
 
-    // // Simple expression for curvature
-    // K_ = -fvc::div(nHatf_);
+    // Simple expression for curvature
+    K_ = -fvc::div(nHatf);
 
-    // Kf_ = fvc::interpolate(K_);
-    surfaceTensionForce_;
+    surfaceTensionForce_ = fvc::interpolate(sigma() *K_)*fvc::snGrad(alpha1_);;
 }
 
 

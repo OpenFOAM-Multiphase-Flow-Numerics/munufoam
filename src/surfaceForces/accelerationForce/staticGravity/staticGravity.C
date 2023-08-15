@@ -17,22 +17,23 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "gravity.H"
+#include "staticGravity.H"
 #include "gravityMeshObject.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvc.H"
-#include "registerAccelerationModels.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    registerBaseAccelerationModel(gravity);
+    defineTypeNameAndDebug(staticGravity, 0);
+    addToRunTimeSelectionTable(accelerationForceMethod,staticGravity, dictionary);
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::gravity::gravity
+Foam::staticGravity::staticGravity
 (
     interfaceCapturingMethod& ICM,
     const dictionary& dict
@@ -43,7 +44,7 @@ Foam::gravity::gravity
         ICM,
         dict
     ),
-    gravityDict_(dict),
+    staticGravityDict_(dict),
     g_
     (
         "gravity",
@@ -69,7 +70,7 @@ Foam::gravity::gravity
 
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
 
-void Foam::gravity::calculateAcc()
+void Foam::staticGravity::calculateAcc()
 {
     // read only if mesh changed would be clever
     const fvMesh& mesh = acc_.mesh();
@@ -88,28 +89,17 @@ void Foam::gravity::calculateAcc()
 }
 
 
-Foam::volScalarField& Foam::gravity::pressure
+Foam::volScalarField& Foam::staticGravity::pressure
 (
     volScalarField& p,
     volScalarField& p_rgh
 )
 {
-    return p_rgh;
+    return p;
 }
 
 
-void Foam::gravity::updatePressure
-(
-    volScalarField& p,
-    volScalarField& p_rgh,
-    const volScalarField& rho
-)
-{
-    p == p_rgh + rho*acc_;
-}
-
-
-void Foam::gravity::updateRefPressure
+void Foam::staticGravity::updatePressure
 (
     volScalarField& p,
     volScalarField& p_rgh,
@@ -120,11 +110,22 @@ void Foam::gravity::updateRefPressure
 }
 
 
-Foam::tmp<Foam::surfaceScalarField> Foam::gravity::accelerationForce()
+void Foam::staticGravity::updateRefPressure
+(
+    volScalarField& p,
+    volScalarField& p_rgh,
+    const volScalarField& rho
+)
+{
+    p == p_rgh + rho*acc_;
+}
+
+
+Foam::tmp<Foam::surfaceScalarField> Foam::staticGravity::accelerationForce()
 {
     const fvMesh& mesh = acc_.mesh();
     const volScalarField& rho = mesh.lookupObject<volScalarField>("rho");
-    return -accf()*fvc::snGrad(rho);
+    return fvc::interpolate(rho)*(g_ & mesh.Sf())/mesh.magSf();
 }
 
 // ************************************************************************* //

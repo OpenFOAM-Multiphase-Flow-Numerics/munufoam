@@ -16,71 +16,114 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::alphaCSF
+    Foam::gravityRecon
 
 Description
+    constant gravitional forces
 
 SourceFiles
-    alphaCSF.C
+    gravityRecon.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef alphaCSF_H
-#define alphaCSF_H
+#ifndef gravityRecon_H
+#define gravityRecon_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "uniformDimensionedFields.H"
 
-#include "deltaFunctionModel.H"
-
+#include "accelerationForceGeoVoFMethod.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class alphaCSF Declaration
+                Class gravityRecon Declaration
 \*---------------------------------------------------------------------------*/
 
-class alphaCSF
-    : public deltaFunctionModel
+class gravityRecon
+    : public accelerationForceGeoVoFMethod
 {
-private:
+
+        //- const access dict
+        const dictionary& gravityReconDict_;
+
+        //- gravityRecon vector
+        dimensionedVector g_;
+
+        //- Href Field
+        uniformDimensionedScalarField hRef_;
 
     // Private Member Functions
 
         //- Disallow copy construct
-        alphaCSF(const alphaCSF&);
+        gravityRecon(const gravityRecon&);
 
         //- Disallow default bitwise assignment
-        void operator=(const alphaCSF&);
+        void operator=(const gravityRecon&);
 
-    protected:
+
+        protected:
 
         //- Re-calculate the interface curvature
-        virtual void calculateDeltaFunction();
-
+        virtual void calculateAcc();
 
 
 public:
 
     //- Runtime type information
-    TypeName("alphaCSF");
+    TypeName("gravityRecon");
+
 
     // Constructors
 
         //- Construct from dictionary
-        alphaCSF
+        gravityRecon
         (
-            const dictionary& dict,
-            const volScalarField& alpha1
+            geometricVoFMethod& geoVoF,
+            const dictionary& dict
         );
 
-        //- Destructor
-        virtual ~alphaCSF()
-        {}
+        gravityRecon
+        (
+            interfaceCapturingMethod& geoVoF,
+            const dictionary& dict
+        );
+
+
+
+    //- Destructor
+    virtual ~gravityRecon()
+    {}
+
+    //- return the pressure field depending
+    virtual volScalarField& pressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh
+    );
+
+    //- update static pressure field
+    virtual void updatePressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
+
+    //- update dynamic pressure field
+    virtual void updateRefPressure
+    (
+        volScalarField& p,
+        volScalarField& p_rgh,
+        const volScalarField& rho
+    );
+
+    virtual tmp<surfaceScalarField> accelerationForce();
 
 
 };

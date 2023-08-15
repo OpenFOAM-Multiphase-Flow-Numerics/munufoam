@@ -17,47 +17,73 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "alphaCSF.H"
-#include "addToRunTimeSelectionTable.H"
-
-#include "fvcSnGrad.H"
+#include "accelerationForceMethod.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(alphaCSF, 0);
-    addToRunTimeSelectionTable(deltaFunctionModel,alphaCSF, dictionary);
+    defineTypeNameAndDebug(accelerationForceMethod, 0);
+    defineRunTimeSelectionTable(accelerationForceMethod, dictionary);
+    std::unique_ptr<HashTable<word>> accelerationForceMethod::compatibilityTable_(new HashTable<word>());
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::alphaCSF::alphaCSF
+// Foam::accelerationForceMethod::registerModel
+// (
+//     word modelName,
+//     word compatibleICM
+// )
+// :
+//     modelName_(modelName),
+//     compatibleICM_(compatibleICM),
+// {
+
+// }
+
+
+Foam::accelerationForceMethod::accelerationForceMethod
 (
-    const dictionary& dict,
-    const volScalarField& alpha1
+    interfaceCapturingMethod& ICM,
+    const dictionary& dict
 )
 :
-    deltaFunctionModel
+    accf_
     (
-        typeName,
-        dict,
-        alpha1
+        IOobject
+        (
+            "ghf",
+            ICM.alpha1().mesh().time().timeName(),
+            ICM.alpha1().mesh()
+        ),
+        ICM.alpha1().mesh(),
+        dimensionedScalar("accf_", dimAcceleration*dimLength, 0.0)
+    ),
+    acc_
+    (
+        IOobject
+        (
+            "gh",
+            ICM.alpha1().mesh().time().timeName(),
+            ICM.alpha1().mesh()
+        ),
+        ICM.alpha1().mesh(),
+        dimensionedScalar("acc_", dimAcceleration*dimLength, 0.0)
     )
-
-
 {
 
 }
 
-// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::alphaCSF::calculateDeltaFunction()
+// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
+
+
+void Foam::accelerationForceMethod::calculateAcc()
 {
-    deltaFunction_ = fvc::snGrad(alpha1_);
+    notImplemented("bool Foam::accelerationForceMethod::calculateAcc()");;
 }
-
 
 
 

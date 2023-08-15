@@ -39,7 +39,7 @@ Foam::surfaceForces::surfaceForces
     accModel_(nullptr)
 {
     surfTenForceModel_ = surfaceTensionForceModel::New(surfaceForcesCoeffs_,ICM_);
-    // accModel_ = accelerationModel::New(surfaceForcesCoeffs_,alpha1.mesh());
+    accModel_ = accelerationForceMethod::New(ICM,surfaceForcesCoeffs_);
 }
 
 
