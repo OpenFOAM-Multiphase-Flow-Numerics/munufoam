@@ -9,17 +9,39 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSolution;
+    class       volScalarField;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-field alpha.water;
-type sin;
-direction (1 0 0);
-up (0 1 0);
-centre (-7.5e-4 0 0);
-lambda 0.003;
-amplitude 3e-5;
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    "(left|right|top|bottom)"
+    {
+        type            fixedFluxPressure;
+        value           uniform 0;
+    }
+/*
+    atmosphere
+    {
+        type            totalPressure;
+        p0              uniform 0;
+        U               U;
+        phi             phi;
+        rho             rho;
+        psi             none;
+        gamma           1;
+        value           uniform 0;
+    }
+*/
+    "(front|back)"
+    {
+        type            empty;
+    }
+}
 
 // ************************************************************************* //
