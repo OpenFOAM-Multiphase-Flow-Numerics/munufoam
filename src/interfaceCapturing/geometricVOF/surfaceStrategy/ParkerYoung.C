@@ -25,7 +25,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "gradAlpha.H"
+#include "ParkerYoung.H"
 #include "fvc.H"
 #include "leastSquareGrad.H"
 
@@ -33,13 +33,13 @@ License
 
 namespace Foam
 {
-    defineTypeNameAndDebug(gradAlpha, 0);
+    defineTypeNameAndDebug(ParkerYoung, 0);
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::gradAlpha::gradSurf(const volScalarField& phi, const geometricVoF& surf)
+void Foam::ParkerYoung::gradSurf(const volScalarField& phi, const geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     leastSquareGrad<scalar> lsGrad("polyDegree1",mesh_.geometricD());
@@ -89,7 +89,7 @@ void Foam::gradAlpha::gradSurf(const volScalarField& phi, const geometricVoF& su
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::gradAlpha::gradAlpha
+Foam::ParkerYoung::ParkerYoung
 (
     const fvMesh& mesh,
     const dictionary& dict
@@ -107,7 +107,7 @@ Foam::gradAlpha::gradAlpha
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void Foam::gradAlpha::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state)
+void Foam::ParkerYoung::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::timeState state)
 {
     addProfilingInFunction(geometricVoF);
     if (state == timeState::oldState)
@@ -121,7 +121,7 @@ void Foam::gradAlpha::update(geometricVoF& newSurf,geometricVoF& oldSurf,Foam::t
 
 }
 
-void Foam::gradAlpha::reconstruct(geometricVoF& surf)
+void Foam::ParkerYoung::reconstruct(geometricVoF& surf)
 {
     addProfilingInFunction(geometricVoF);
     // const bool uptodate = alreadyReconstructed(forceUpdate);

@@ -24,23 +24,23 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interface::gradAlpha
+    Foam::interface::ParkerYoung
 
 Description
     Reconstructs an interface (centre and normal vector) consisting of planes
     to match the internal fluid distribution in cells. The interface normals
     are estimated by least square gradient scheme on the VoF Field (alpha).
-    Also known as Young method
+    Also known as Parker Young method
 
     Original code supplied by Henning Scheufler, DLR (2019)
 
 SourceFiles
-    gradAlpha.C
+    ParkerYoung.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef gradAlpha_H
-#define gradAlpha_H
+#ifndef ParkerYoung_H
+#define ParkerYoung_H
 
 #include "typeInfo.H"
 #include "volFields.H"
@@ -56,10 +56,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                          Class gradAlpha Declaration
+                          Class ParkerYoung Declaration
 \*---------------------------------------------------------------------------*/
 
-class gradAlpha
+class ParkerYoung
 {
     // Private Data
 
@@ -89,26 +89,26 @@ class gradAlpha
     // Private Member Functions
 
         //- No copy construct
-        gradAlpha(const gradAlpha&) = delete;
+        ParkerYoung(const ParkerYoung&) = delete;
 
         //- No copy assignment
-        void operator=(const gradAlpha&) = delete;
+        void operator=(const ParkerYoung&) = delete;
 
 
 public:
 
     //- Runtime type information
-    TypeName("gradAlpha");
+    TypeName("ParkerYoung");
 
     //- Construct from mesh and dict
-    gradAlpha
+    ParkerYoung
     (
         const fvMesh& mesh,
         const dictionary& dict
     );
 
     //- Destructor
-    virtual ~gradAlpha() = default;
+    virtual ~ParkerYoung() = default;
 
 
     // Member Functions

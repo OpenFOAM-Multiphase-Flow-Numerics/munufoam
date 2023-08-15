@@ -32,7 +32,7 @@ License
 #include "isoAdvection.H"
 
 #include "isoAlpha.H"
-#include "gradAlpha.H"
+#include "ParkerYoung.H"
 #include "plicRDF.H"
 
 
@@ -50,7 +50,7 @@ makeGeometricVoFMethodTypes
 (
     geometricVoFMethod,
     geometricVoF,
-    gradAlpha,
+    ParkerYoung,
     isoAdvection
 );
 

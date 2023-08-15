@@ -23,7 +23,7 @@ geometricVOF/surfaceIterators/surfaceIteratorIso.C
 geometricVOF/geometricVoFMethod.C
 geometricVOF/advectionStrategy/isoAdvection.C
 geometricVOF/surfaceStrategy/isoAlpha.C
-geometricVOF/surfaceStrategy/gradAlpha.C
+geometricVOF/surfaceStrategy/ParkerYoung.C
 geometricVOF/surfaceStrategy/plicRDF.C
 geometricVOF/geometricVoF.C
 geometricVOF/reconstructedDistanceFunction/reconstructedDistanceFunction.C
