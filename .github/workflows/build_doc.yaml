@@ -24,10 +24,10 @@ jobs:
     - name: Deploy Test Build
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: build/docs/sphinx
+        folder: docs
         target-folder: test_build
     - name: Deploy Build
       if: ${{ github.event.pull_request.merged }}
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: build/docs
+        folder: docs
