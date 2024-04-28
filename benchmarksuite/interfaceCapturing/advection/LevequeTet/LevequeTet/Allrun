@@ -8,7 +8,6 @@ wmake libso generateU
 
 runApplication gmshv493 -3 triBlock.geo
 runApplication gmshToFoam triBlock.msh
-runApplication changeDictionary 
 restore0Dir
 
 runApplication setAlphaField

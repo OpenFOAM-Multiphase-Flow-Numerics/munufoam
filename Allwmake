@@ -7,7 +7,7 @@ wmake libso src/surfaceForces
 wmake libso src/postProcessing
 
 wmake applications/benchmark/interfaceAdvector
-/*wmake applications/benchmark/reconstructInterface*/
+#wmake applications/benchmark/reconstructInterface
 
 wmake applications/solver/interCapturingFoam
 

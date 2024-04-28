@@ -40,7 +40,7 @@ surfaceForces
 {
   sigma 0;
   surfaceTensionForceModel $SURFTENMODEL;
-  accelerationModel $GRAVITYMODEL;
+  accelerationForceModel $GRAVITYMODEL;
 }
 
 

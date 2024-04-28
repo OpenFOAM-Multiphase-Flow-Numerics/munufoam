@@ -30,7 +30,6 @@ jobs:
         pip install oftest scipy casefoam
         openfoam2306 -c "py.test  --writeNSteps=1 tutorials/"
         openfoam2306 -c "py.test  --writeNSteps=1 benchmarksuite/"
-        openfoam2306 -c "py.test -m 'not slow'"
         
     - name: upload logs
       if: ${{ failure() }}

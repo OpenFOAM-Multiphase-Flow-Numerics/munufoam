@@ -15,10 +15,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-SUBCYL       1;
-MethodType      algebraicVoF;
-advectStrat     implicitAdvection;
-reconStrat      standard;
+SUBCYL          1;
+MethodType      geometricVoFMethod;
+advectStrat     isoAdvection;
+reconStrat      plicRDF;
 
 
 

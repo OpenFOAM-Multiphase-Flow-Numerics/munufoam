@@ -20,8 +20,9 @@ ny	1;
 nz	80;
 
 SUBCYL       1;
-ADVECTSCHEME isoAdvection;
-RECONSCHEME  Swartz;
+MethodType      geometricVoFMethod;
+advectStrat     isoAdvection;
+reconStrat      plicRDF;
 MAXCFL       0.1;
 
 // ************************************************************************* //
