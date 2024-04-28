@@ -24,16 +24,16 @@ def simMod(interfaceCapturingMethod, interfaceRepresentation):
 
 isoAdvection_plicRDF = simMod("isoAdvection", "plicRDF")
 isoAdvection_isoAlpha = simMod("isoAdvection", "isoAlpha")
-isoAdvection_gradAlpha = simMod("isoAdvection", "gradAlpha")
+isoAdvection_ParkerYoung = simMod("isoAdvection", "ParkerYoung")
 
-parameters = [isoAdvection_plicRDF, isoAdvection_isoAlpha, isoAdvection_gradAlpha]
+parameters = [isoAdvection_plicRDF, isoAdvection_isoAlpha, isoAdvection_ParkerYoung]
 
 
 @pytest.mark.parametrize(
     "run_reset_case",
     parameters,
     indirect=["run_reset_case"],
-    ids=["isoAdvection_plicRDF", "isoAdvection_isoAlpha", "isoAdvection_gradAlpha"],
+    ids=["isoAdvection_plicRDF", "isoAdvection_isoAlpha", "isoAdvection_ParkerYoung"],
 )
 def test_damBreak(run_reset_case):
     logs = oftest.path_logs()

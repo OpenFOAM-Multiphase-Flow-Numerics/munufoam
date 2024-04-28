@@ -15,6 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+IFType                   geometricVoFMethod;
 interfaceCapturingMethod isoAdvection;
 interfaceRepresentation  plicRDF;
 
