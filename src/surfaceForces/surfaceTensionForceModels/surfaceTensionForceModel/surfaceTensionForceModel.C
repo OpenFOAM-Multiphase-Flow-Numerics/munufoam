@@ -51,7 +51,7 @@ Foam::surfaceTensionForceModel::surfaceTensionForceModel
             alpha1_.mesh()
         ),
         alpha1_.mesh(),
-        dimensionedScalar("surfaceTensionForce_", dimless/dimLength, 0.0)
+        dimensionedScalar("surfaceTensionForce_", dimForce/dimVolume, 0.0)
     )
 {
     surfTenModel_ = surfaceTensionModel::New(dict,alpha1_.mesh());
