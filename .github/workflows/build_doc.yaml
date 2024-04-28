@@ -15,21 +15,25 @@ jobs:
         && pip3 install furo
         && pip3 install breathe
         && pip3 install sphinx-sitemap
+
     - name: Checkout repo
       uses: actions/checkout@v4
+
     - name: Build docs
       run: |
         ./buildDoc.sh
         cd docs/
         ls docs
         touch .nojekyll
-    - name: Deploy Test Build
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: docs
-        target-folder: test_build
-    - name: Deploy Build
-      if: ${{ github.event.pull_request.merged }}
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: docs
+
+    # - name: Deploy Test Build
+    #   uses: JamesIves/github-pages-deploy-action@v4
+    #   with:
+    #     folder: docs
+    #     target-folder: test_build
+
+    # - name: Deploy Build
+    #   if: ${{ github.event.pull_request.merged }}
+    #   uses: JamesIves/github-pages-deploy-action@v4
+    #   with:
+    #     folder: docs
