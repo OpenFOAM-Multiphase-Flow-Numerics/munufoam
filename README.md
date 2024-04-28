@@ -1,3 +1,6 @@
+**[Prerequisites](#Prerequisites)** |
+**[Installing](#Installing)** |
+**[Documentation](https://openfoam-multiphase-flow-numerics.github.io/numufoam/)** |
 # Multiphase
 
 
@@ -55,8 +58,12 @@ pip install oftest
 py.test # runs the tests
 py.test --writeNSteps=1 tutorials/ # test case in run folder
 ```
-### build the documentation
 
+### Documentation build
+
+For building the documentation further dependencies like doxygen and sphinx are requirement.
+
+the current  documentation can be fewed [here](https://openfoam-multiphase-flow-numerics.github.io/numufoam/)
 
 
 ## Authors
