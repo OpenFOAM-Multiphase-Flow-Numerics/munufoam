@@ -1,6 +1,0 @@
-volumeFractionError/volumeFractionError.C
-reconstructionError/reconstructionError.C
-interface/geoVoFSurface.C
-interface/sampledGeoVoFSurface.C
-
-LIB = $(FOAM_USER_LIBBIN)/libpostProcess

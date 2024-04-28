@@ -1,3 +1,0 @@
-generateUVortex2D.C
-
-EXE = $(FOAM_USER_APPBIN)/generateUVortex2D
