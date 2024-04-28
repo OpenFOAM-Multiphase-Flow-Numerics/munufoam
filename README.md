@@ -14,7 +14,7 @@ An interface capturing framework with tests and benchmarks
 
 ### Prerequisites
 
-Requires OpenFOAM v2112:
+Requires OpenFOAM v2306:
 
 ```
 https://www.openfoam.com/download/release-history.php
@@ -55,6 +55,8 @@ pip install oftest
 py.test # runs the tests
 py.test --writeNSteps=1 tutorials/ # test case in run folder
 ```
+### build the documentation
+
 
 
 ## Authors
