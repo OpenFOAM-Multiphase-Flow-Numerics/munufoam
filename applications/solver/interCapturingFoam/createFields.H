@@ -104,8 +104,6 @@ surfaceForces surfForces(advector.ref(),transportProperties);
 //#include "gh.H"
 const volScalarField& gh = surfForces.acc();
 
-
-
 volScalarField p
 (
     IOobject
@@ -146,9 +144,3 @@ mesh.setFluxRequired(alpha1.name());
 
 #include "createMRF.H"
 #include "createFvOptions.H"
-
-
-
-
-
-

@@ -19,7 +19,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::interface
+    Foam::geoVoFSurface
 
 Description
 
@@ -27,13 +27,13 @@ Author
     Henning Scheufler, DLR, all rights reserved.
 
 SourceFiles
-    interface.C
-    interfaceTemplates.C
+    geoVoFSurface.C
+    geoVoFSurfaceTemplates.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef interface_H
-#define interface_H
+#ifndef geoVoFSurface_H
+#define geoVoFSurface_H
 
 #include "PackedBoolList.H"
 #include "volFields.H"
@@ -52,19 +52,17 @@ class treeBoundBox;
 class triSurface;
 
 /*---------------------------------------------------------------------------*\
-                       Class interface Declaration
+                       Class geoVoFSurface Declaration
 \*---------------------------------------------------------------------------*/
 
-class interface
+class geoVoFSurface
 :
     public meshedSurface
 {
     // Private typedefs for convenience
     typedef meshedSurface MeshStorage;
 
-
     // Private data
-
 
         //- Reference to mesh
         const fvMesh& mesh_;
@@ -77,13 +75,13 @@ public:
 
 
     //- Runtime type information
-    TypeName("interface");
+    TypeName("geoVoFSurface");
 
 
     // Constructors
 
         //- Construct from lookup
-        interface(const fvMesh& mesh);
+        geoVoFSurface(const fvMesh& mesh);
 
 
     // Member Functions
@@ -94,9 +92,6 @@ public:
             return meshCells_;
         }
 
-
-
-
         //- Interpolates cCoords,pCoords. Uses the references to the original
         //  fields used to create the iso surface.
         template<class Type>
@@ -105,14 +100,6 @@ public:
             const GeometricField<Type, fvPatchField, volMesh>& cCoords,
             const Field<Type>& pCoords
         ) const;
-
-//        // hacked sca
-//        template<  >
-//        tmp<Field<scalar> > interpolate
-//        (
-//            const GeometricField<scalar, fvPatchField, volMesh>& cCoords,
-//            const Field<scalar>& pCoords
-//        ) const;
 
 };
 
@@ -124,7 +111,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "interfaceTemplates.C"
+    #include "geoVoFSurfaceTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -19,7 +19,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::sampledInterface
+    Foam::sampledGeoVoFSurface
 
 Description
 
@@ -27,14 +27,14 @@ Author
     Henning Scheufler, DLR, all rights reserved.
 
 SourceFiles
-    sampledInterface.C
+    sampledGeoVoFSurface.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef sampledInterface_H
-#define sampledInterface_H
+#ifndef sampledGeoVoFSurface_H
+#define sampledGeoVoFSurface_H
 
-#include "interface.H"
+#include "geoVoFSurface.H"
 #include "sampledSurface.H"
 #include "ZoneIDs.H"
 #include "fvMeshSubset.H"
@@ -45,10 +45,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class sampledInterface Declaration
+                       Class sampledGeoVoFSurface Declaration
 \*---------------------------------------------------------------------------*/
 
-class sampledInterface
+class sampledGeoVoFSurface
 :
     public sampledSurface
 {
@@ -60,10 +60,10 @@ class sampledInterface
         //- For zones: patch to put exposed faces into
         mutable word exposedPatchName_;
 
-        mutable autoPtr<interface> surfPtr_;
+        mutable autoPtr<geoVoFSurface> surfPtr_;
 
 
-        // Recreated for every interface
+        // Recreated for every geoVoFSurface
 
             //- Time at last call, also track if surface needs an update
             mutable label prevTimeIndex_;
@@ -114,13 +114,13 @@ class sampledInterface
 public:
 
     //- Runtime type information
-    TypeName("sampledInterface");
+    TypeName("sampledGeoVoFSurface");
 
 
     // Constructors
 
         //- Construct from dictionary
-        sampledInterface
+        sampledGeoVoFSurface
         (
             const word& name,
             const polyMesh& mesh,
@@ -129,12 +129,12 @@ public:
 
 
     //- Destructor
-    virtual ~sampledInterface();
+    virtual ~sampledGeoVoFSurface();
 
 
     // Member Functions
 
-        const interface& surface() const
+        const geoVoFSurface& surface() const
         {
             return surfPtr_();
         }
@@ -274,7 +274,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "sampledInterfaceTemplates.C"
+    #include "sampledGeoVoFSurfaceTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

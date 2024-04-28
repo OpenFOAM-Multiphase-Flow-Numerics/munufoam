@@ -20,7 +20,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "interface.H"
+#include "geoVoFSurface.H"
 #include "polyMesh.H"
 #include "syncTools.H"
 #include "surfaceFields.H"
@@ -33,7 +33,7 @@ License
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::interface::interpolate
+Foam::geoVoFSurface::interpolate
 (
     const GeometricField<Type, fvPatchField, volMesh>& cCoords,
     const Field<Type>& pCoords
@@ -43,16 +43,5 @@ Foam::interface::interpolate
     return Field<Type>(this->points().size()); //,Type::zero);
 }
 
-//template< >
-//Foam::tmp<Foam::Field<Foam::scalar>>
-//Foam::interface::interpolate
-//(
-//    const GeometricField<scalar, fvPatchField, volMesh>& cCoords,
-//    const Field<scalar>& pCoords
-//) const
-//{
-
-//    return Field<scalar>(this->points().size(),0);
-//}
 
 // ************************************************************************* //

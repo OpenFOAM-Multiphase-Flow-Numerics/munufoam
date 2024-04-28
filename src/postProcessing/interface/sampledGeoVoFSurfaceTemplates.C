@@ -20,7 +20,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "sampledInterface.H"
+#include "sampledGeoVoFSurface.H"
 #include "volFieldsFwd.H"
 #include "pointFields.H"
 #include "volPointInterpolation.H"
@@ -29,7 +29,7 @@ License
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::sampledInterface::sampleOnFaces
+Foam::sampledGeoVoFSurface::sampleOnFaces
 (
     const interpolation<Type>& sampler
 ) const
@@ -48,7 +48,7 @@ Foam::sampledInterface::sampleOnFaces
 
 template<class Type>
 Foam::tmp<Foam::Field<Type>>
-Foam::sampledInterface::sampleOnPoints
+Foam::sampledGeoVoFSurface::sampleOnPoints
 (
     const interpolation<Type>& interpolator
 ) const

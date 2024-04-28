@@ -55,4 +55,30 @@ maxDeltaT       1;
 
 maxCapillaryNum 1e8;
 
+
+functions
+{
+    freeSurface
+    {
+        type            surfaces;
+        libs            (postProcess sampling);
+        writeControl    writeTime;
+
+        surfaceFormat   vtk;
+        fields          (p U Q);
+
+        // interpolationScheme cellPoint;  //<- default
+
+        surfaces
+        {
+            freeSurface
+            {
+                type        geoVoFSurface;
+                interpolate false;
+            }
+
+        }
+    }
+}
+
 // ************************************************************************* //
