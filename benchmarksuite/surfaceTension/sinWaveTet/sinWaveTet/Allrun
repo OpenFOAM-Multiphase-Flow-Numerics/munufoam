@@ -10,7 +10,12 @@ runApplication changeDictionary
 runApplication transformPoints -rollPitchYaw '(90.0 0 0)'
 
 runApplication setAlphaField
-runApplication decomposePar
-runParallel $(getApplication)
-#sbatch Allrun_Slurm
+
+if [ "$1" = "-test" ]
+then
+    runApplication $(getApplication)
+else
+    runApplication decomposePar
+    runParallel $(getApplication)
+fi
 #------------------------------------------------------------------------------
