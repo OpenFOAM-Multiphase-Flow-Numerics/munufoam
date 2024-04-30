@@ -12,9 +12,3 @@ runApplication transformPoints -yawPitchRoll '(0 30 0)'
 runApplication setAlphaField
 
 runApplication $(getApplication)
-
-
-#if [ -n "$application" ]
-#then
-#    foamToVTK -surfaceFields
-#fi

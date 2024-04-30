@@ -2,7 +2,7 @@ import pytest
 import oftest
 from oftest import run_reset_case
 
-def test_damBreak(run_reset_case):
+def test_sloshingSinWave(run_reset_case):
     logs = oftest.path_logs()
     assert len(logs) > 0
     for log in logs:
