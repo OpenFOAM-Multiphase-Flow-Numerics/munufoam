@@ -36,8 +36,8 @@ Author
 
 #include "OFstream.H"
 
-#include "interfaceRepresentation.H"
-#include "interfaceCapturing.H"
+#include "geometricVoF.H"
+#include "geometricVoFMethod.H"
 #include "implicitFunction.H"
 #include "cutCellImpFunc.H"
 #include "cutCellIso.H"
@@ -178,16 +178,16 @@ int main(int argc, char *argv[])
 
     // autoPtr<interfaceRepresentation> surf =
     //     interfaceRepresentation::New(alpha1,phi,U,fvSolutionDict);
-    autoPtr<interfaceCapturing> ICM
+    autoPtr<geometricVoFMethod> geoVoF
     (
-        interfaceCapturing::New(alpha1,phi,U)
+        geometricVoFMethod::New(alpha1,phi,U)
     );
-    interfaceRepresentation& surf = ICM->surf();
-    surfaceForces surfForces(alpha1,phi,U,transportProperties);
+    const geometricVoF& surf = geoVoF->surface(timeState::newState);
+
+    surfaceForces surfForces(geoVoF.ref(),transportProperties);
 
     dictionary reconDict = fvSolutionDict.subDict("reconstruction");
 
-    // lookup of relevevant parameters
     label nIter = reconDict.get<label>("nIter");
     word setAlphaMethod = reconDict.get<word>("setAlphaMethod");
     if (setAlphaMethod != "cutCellImpFunc" && setAlphaMethod != "cutCellIso")
@@ -204,8 +204,6 @@ int main(int argc, char *argv[])
     scalar recTime = 0;
     vector centreMin = centre - 0.1*centre;
     vector centreMax = centre + 0.1*centre;
-
-
 
     while (runTime.run())
     {
@@ -256,7 +254,7 @@ int main(int argc, char *argv[])
 
             mesh.time().cpuTimeIncrement();
 
-            surf.reconstruct();
+            const geometricVoF& surf = geoVoF->surface(timeState::newState);
 
             surfForces.correct();
 
@@ -266,7 +264,7 @@ int main(int argc, char *argv[])
             volScalarField curv = mesh.lookupObjectRef<volScalarField>("K_");
 
 
-            recErr.calcError(initAlphaFieldDict,surf.centre(),surf.normal(),curv,false);
+            recErr.calcError(initAlphaFieldDict,surf.centre,surf.normal,curv,false);
 
         }
 
