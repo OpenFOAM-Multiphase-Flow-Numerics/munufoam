@@ -14,6 +14,11 @@ restore0Dir
 runApplication setAlphaField
 runApplication generateUVortex2D
 
-runApplication decomposePar
-runParallel $(getApplication)
+if [ "$1" = "-test" ]
+then
+    runApplication $(getApplication)
+else
+    runApplication decomposePar
+    runParallel $(getApplication)
+fi
 
