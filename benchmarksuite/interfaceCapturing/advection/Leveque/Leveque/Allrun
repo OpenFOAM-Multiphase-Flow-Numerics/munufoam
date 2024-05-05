@@ -12,7 +12,11 @@ restore0Dir
 runApplication setAlphaField
 runApplication generateU
 
-runApplication decomposePar
-runParallel $(getApplication)
-# mpirun -oversubscribe -np 4 $(getApplication) -parallel  > log.$(getApplication)
+if [ "$1" = "-test" ]
+then
+    runApplication $(getApplication)
+else
+    runApplication decomposePar
+    runParallel $(getApplication)
+fi
 

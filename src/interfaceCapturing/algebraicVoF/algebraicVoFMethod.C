@@ -72,8 +72,9 @@ Foam::algebraicVoFMethod::New
 
     word algebraicVoFMethodTypeName = 
     (
-        alphaDict.get<word>("interfaceCapturingScheme") + "_"
-      + alphaDict.get<word>("interfaceRepresentation") 
+        alphaDict.get<word>("interfaceType") + "_"
+      + alphaDict.get<word>("interfaceRepresentation")  + "_"
+      + alphaDict.get<word>("interfaceCapturingScheme")
     );
 
     Info<< "Selecting interfaceCapturingScheme: "

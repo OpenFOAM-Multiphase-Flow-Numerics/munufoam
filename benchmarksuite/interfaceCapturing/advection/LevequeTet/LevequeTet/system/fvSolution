@@ -26,8 +26,9 @@ solvers
         nAlphaSubCycles             $SUBCYL;
         cAlpha                      1;
 
-        interfaceCapturingScheme             $ADVECTSCHEME;
-        interfaceRepresentation        $RECONSCHEME;
+        interfaceType               $MethodType;
+        interfaceCapturingScheme    $advectStrat;
+        interfaceRepresentation     $reconStrat;
 
 
         vof2IsoTol          1e-8;

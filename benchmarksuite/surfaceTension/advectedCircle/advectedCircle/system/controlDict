@@ -83,7 +83,7 @@ functions
 
             freeSurf
             {
-                type            interface;
+                type            geoVoFSurface;
                 interpolate     false;
             }
 

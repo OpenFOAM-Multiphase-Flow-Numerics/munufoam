@@ -23,7 +23,7 @@ solvers
         nAlphaCorr                  2;
         nAlphaSubCycles             $SUBCYL;
         cAlpha                      1;
-
+        
         interfaceType               $MethodType;
         interfaceCapturingScheme    $advectStrat;
         interfaceRepresentation     $reconStrat;

@@ -69,8 +69,7 @@ surfaceForces
 {
   sigma 1;
   surfaceTensionForceModel Brackbill;
-  accelerationModel gravity;
-  deltaFunctionModel alphaCSF;
+  accelerationForceModel gravity;
 }
 
 // ************************************************************************* //

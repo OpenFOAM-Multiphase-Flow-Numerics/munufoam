@@ -8,12 +8,16 @@ wmake libso generateUDeform
 
 runApplication gmshv493 -3 triBlock.geo
 runApplication gmshToFoam triBlock.msh
-runApplication changeDictionary 
 restore0Dir
 
 runApplication setAlphaField
 runApplication generateUDeform
 
-runApplication decomposePar
-runParallel $(getApplication)
+if [ "$1" = "-test" ]
+then
+    runApplication $(getApplication)
+else
+    runApplication decomposePar
+    runParallel $(getApplication)
+fi
 

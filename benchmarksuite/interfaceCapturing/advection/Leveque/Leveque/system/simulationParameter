@@ -15,13 +15,13 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-nx 64;
-ny 64;
-nz 64;
+nx 32;
+ny 32;
+nz 32;
 
 SUBCYL       1;
-MethodType      geometricVoF;
-advectStrat     implicitAdvection;
-reconStrat      standard;
+MethodType      geometricVoFMethod;
+advectStrat     isoAdvection;
+reconStrat      plicRDF;
 
 // ************************************************************************* //

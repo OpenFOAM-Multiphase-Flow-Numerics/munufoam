@@ -1,6 +1,3 @@
-import os
-from numpy import logspace
-import pytest
 import oftest
 from oftest import run_reset_case
 

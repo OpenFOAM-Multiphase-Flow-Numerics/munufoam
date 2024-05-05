@@ -17,6 +17,7 @@ EXE_LIBS = \
     -lsampling \
     -linterfaceCapturing \
     -lpostProcess \
+    -linterfaceCapturing \
     -lsurfaceForces
 
 

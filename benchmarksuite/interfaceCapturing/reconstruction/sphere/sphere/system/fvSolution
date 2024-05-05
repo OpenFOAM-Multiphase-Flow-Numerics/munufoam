@@ -20,8 +20,9 @@ solvers
 {
     alpha1
     {
-        interfaceCapturingScheme isoAdvection;
-        interfaceRepresentation $RECONSCHEME;
+        interfaceType               $MethodType;
+        interfaceCapturingScheme    $advectStrat;
+        interfaceRepresentation     $reconStrat;
         //gradAlphaCoeffs
 
         iterations 10;

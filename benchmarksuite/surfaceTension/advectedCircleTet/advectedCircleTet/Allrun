@@ -11,8 +11,13 @@ runApplication changeDictionary
 
 
 runApplication setAlphaField
-runApplication decomposePar
-runParallel $(getApplication)
-#sbatch Allrun_Slurm
+
+if [ "$1" = "-test" ]
+then
+    runApplication $(getApplication)
+else
+    runApplication decomposePar
+    runParallel $(getApplication)
+fi
 
 #------------------------------------------------------------------------------

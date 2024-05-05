@@ -19,6 +19,9 @@ nx 256;
 ny 1;
 nz 256;
 
-RECONSCHEME plicRDF;
+MethodType      geometricVoFMethod;
+advectStrat     isoAdvection;
+reconStrat      plicRDF;
+
 
 // ************************************************************************* //
